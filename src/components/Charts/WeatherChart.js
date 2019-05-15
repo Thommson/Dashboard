@@ -16,7 +16,6 @@ const data = [
 class WeatherChart extends Component {
   render () {
     return(
-      <div className="main-chart">
         <VictoryChart width={1200}>
           <VictoryBar
             domainPadding={16}
@@ -33,7 +32,6 @@ class WeatherChart extends Component {
             axis: {stroke: "none"}
           }}/>
       </VictoryChart>
-      </div>
     )
   }
 }
