@@ -62,7 +62,8 @@ class CreateGroup extends Component {
     let newGroup = {
       id: this.state.name+this.state.color,
       name: this.state.name,
-      color: this.state.color
+      color: this.state.color,
+      assignedDevices: []
     };
     this.props.createGroupMaster(newGroup);
   }
@@ -80,23 +81,23 @@ class CreateGroup extends Component {
             <div className="col">
               <p>Color</p>
               <div className="row">
-                <div onClick={this.getColor} className="col-2 align-self-end">
-                  <div id={this.state.red} className="color-box red"></div>
+                <div className="col-2 align-self-end">
+                  <div onClick={this.getColor} id={this.state.red} className="color-box red"></div>
                 </div>
-                <div onClick={this.getColor} className="col-2 align-self-end">
-                  <div id={this.state.orange} className="color-box orange"></div>
+                <div className="col-2 align-self-end">
+                  <div onClick={this.getColor} id={this.state.orange} className="color-box orange"></div>
                 </div>
-                <div onClick={this.getColor} value={this.state.yellow} className="col-2 align-self-end">
-                  <div id={this.state.yellow} className="color-box yellow"></div>
+                <div value={this.state.yellow} className="col-2 align-self-end">
+                  <div onClick={this.getColor} id={this.state.yellow} className="color-box yellow"></div>
                 </div>
-                <div onClick={this.getColor} value={this.state.green} className="col-2 align-self-end">
-                  <div id={this.state.green} className="color-box green"></div>
+                <div value={this.state.green} className="col-2 align-self-end">
+                  <div onClick={this.getColor} id={this.state.green} className="color-box green"></div>
                 </div>
-                <div onClick={this.getColor} value={this.state.blue} className="col-2 align-self-end">
-                  <div id={this.state.blue} className="color-box blue"></div>
+                <div value={this.state.blue} className="col-2 align-self-end">
+                  <div  onClick={this.getColor} id={this.state.blue} className="color-box blue"></div>
                 </div>
-                <div onClick={this.getColor} value={this.state.purple} className="col-2 align-self-end">
-                  <div id={this.state.purple} className="color-box purple"></div>
+                <div value={this.state.purple} className="col-2 align-self-end">
+                  <div onClick={this.getColor} id={this.state.purple} className="color-box purple"></div>
                 </div>
               </div>
             </div>

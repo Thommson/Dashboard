@@ -386,6 +386,9 @@ body{
 .purple{
   background: #750DCF;
 }
+.color-black{
+  color: black;
+}
 @media (min-width: 1450px) {
   .container{
     transition: all 0.2s ease-out;

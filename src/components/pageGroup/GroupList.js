@@ -6,8 +6,8 @@ class GroupList extends Component {
     if(this.props.groups !== undefined && this.props.groups.length > 0){
       return(
         <div className="group-list row">
-          { this.props.groups.map((group) =>
-            <GroupRow deviceArray={this.props.deviceArray} group={group} key={group.id} />
+          { this.props.groups.map((group, index) =>
+            <GroupRow removeDeviceFromGroup={this.props.removeDeviceFromGroup} assignDeviceToGroupMaster={this.props.assignDeviceToGroupMaster} deviceArray={this.props.deviceArray} group={group} key={group.id} />
           )}
         </div>
       )

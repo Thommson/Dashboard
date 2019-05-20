@@ -1,16 +1,55 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import Device from './Device';
+import { DropTarget } from 'react-dnd';
 
+function collect(connect, monitor){
+  return{
+    connectDropTarget: connect.dropTarget(),
+    hovered: monitor.isOver(),
+    device: monitor.getItem()
+  }
+}
+const targetSource = {
+  drop(props, monitor, component){
+    let groupId = props.group.id
+    let deviceId = monitor.getItem().meta.id
+
+    props.assignDeviceToGroupMaster(groupId, deviceId);
+    props.removeDeviceFromGroup(deviceId, groupId);
+  }
+}
 class GroupRow extends Component {
+
+  deleteItem = (id, group) => {
+    //DELETING AND ADDING FUNCTIONALITY HERE !!!
+    /*
+    console.log("GROUP ROW IS SAVING");
+    let groupCopy = Object.assign({}, this.props.group);
+    groupCopy.assignedDevices.push(id);
+    console.log(groupCopy);
+    */
+    //console.log(this.props.group)
+      //this.props.removeDeviceFromGroup(id, this.props.group);
+
+
+  }
+
+
   render () {
+
     if(this.props.deviceArray !== undefined){
-      return(
+      const { connectDropTarget, hovered, device } = this.props;
+      const backgroundHover = hovered ? 'lightgreen' : 'white';
+
+      return connectDropTarget(
         <div className="group-row row">
-          <div className="group-tab-color"></div>
+          <div className="group-tab-color" style={{background: backgroundHover}}></div>
           <div className="container">
             <h2 className="font-3">{this.props.group.name}</h2>
-            <Device />
-            <Device />
+
+                { this.props.deviceArray.models.map((device) =>
+                  <Device group={this.props.group} assignedDevices={this.props.group.assignedDevices} deviceArray={this.props.deviceArray} handleDrop={(id, group) => this.deleteItem(id, group)} device={device} key={device.id} />
+                )}
           </div>
         </div>
       )
@@ -29,4 +68,4 @@ class GroupRow extends Component {
   }
 }
 
-export default GroupRow;
+export default DropTarget("device", targetSource, collect)(GroupRow)

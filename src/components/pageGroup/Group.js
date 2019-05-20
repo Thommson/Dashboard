@@ -8,8 +8,8 @@ class Group extends Component {
     return(
       <div id="group" className="row">
         <div className="col blue-bg">
-          <UnassignedDeviceList deviceArray={this.props.deviceArray} />
-          <GroupList deviceArray={this.props.deviceArray} groups={this.props.groups} />
+          <UnassignedDeviceList removeDeviceFromUnassigned={this.props.removeDeviceFromUnassigned} group="unassigned" unassignedDevices={this.props.unassignedDevices} groups={this.props.groups} deviceArray={this.props.deviceArray} />
+          <GroupList removeDeviceFromGroup={this.props.removeDeviceFromGroup} assignDeviceToGroupMaster={this.props.assignDeviceToGroupMaster} deviceArray={this.props.deviceArray} groups={this.props.groups} />
         </div>
         <CreateGroup createGroupMaster={this.props.createGroupMaster}/>
       </div>
