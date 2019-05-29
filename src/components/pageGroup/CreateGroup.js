@@ -79,7 +79,7 @@ class CreateGroup extends Component {
               <input onChange={this.getName} type="text" name="groupName"/>
             </div>
             <div className="col">
-              <p>Color</p>
+              <p>Color</p>  
               <div className="row">
                 <div className="col-2 align-self-end">
                   <div onClick={this.getColor} id={this.state.red} className="color-box red"></div>

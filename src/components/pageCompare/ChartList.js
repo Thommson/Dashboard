@@ -1,16 +1,25 @@
 import React, { Component } from 'react'
-import Charts from './Charts';
+import ChartCard from './ChartCard';
 
 class ChartList extends Component {
 
   render () {
+    if(this.props.charts !== undefined && this.props.historicalData !== undefined){
       return(
         <div id="chart-list">
-        { this.props.historicalData.map((data) =>
-        <Charts chart={this.props.chart} data={data} key={data.id} />
-        )}
+
+          { this.props.charts.map((chart, index) =>
+          <ChartCard groups={this.props.groups} key={"chart-card-"+index} selectid={"selectid-"+index} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} historicalData={this.props.historicalData} chart={chart} chartType={"chartType" + index} timeGap={"timeGap" + index} cardId={"chart-card" + index}/>
+          )}
+
         </div>
       )
+    } else {
+      return(
+        null
+      )
+    }
+
   }
 }
 

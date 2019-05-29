@@ -39,18 +39,21 @@ class GroupRow extends Component {
 
     if(this.props.deviceArray !== undefined){
       const { connectDropTarget, hovered, device } = this.props;
-      const backgroundHover = hovered ? 'lightgreen' : 'white';
+      const backgroundHover = hovered ? this.props.group.color : this.props.group.color;
+      const opacityHover = hovered ? '1' : '0.5';
 
       return connectDropTarget(
-        <div className="group-row row">
-          <div className="group-tab-color" style={{background: backgroundHover}}></div>
-          <div className="container">
-            <h2 className="font-3">{this.props.group.name}</h2>
-
+        <div className="group-row row" >
+          <div className="group-tab-color" style={{opacity: opacityHover, background: backgroundHover}}></div>
+          <div className="group-row-10" style={{background: backgroundHover}}>
+          </div>
+            <div className="container" >
+              <h2 className="font-3">{this.props.group.name}</h2>
                 { this.props.deviceArray.models.map((device) =>
                   <Device group={this.props.group} assignedDevices={this.props.group.assignedDevices} deviceArray={this.props.deviceArray} handleDrop={(id, group) => this.deleteItem(id, group)} device={device} key={device.id} />
                 )}
-          </div>
+            </div>
+
         </div>
       )
     } else {

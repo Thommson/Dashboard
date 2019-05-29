@@ -4,10 +4,20 @@ import LiveDevice from './LiveDevice';
 class LiveDeviceDataList extends Component {
   render () {
     if(this.props.deviceArray !== undefined){
+      console.log(this.props.selectedDevice);
       return(
         <div id="live-device-data-list" className="row">
-          { this.props.deviceArray.find({name: this.props.selectedDevice}).attributes.value.models.map((value) =>
-            <LiveDevice value={value} key={value.id} />
+          { this.props.deviceArray.find({name: this.props.selectedDevice}).attributes.value.models.map((value) => {
+
+            let dataTypesCopy = Object.assign([],this.props.dataTypes);
+            let dataType = dataTypesCopy.filter( dataType => dataType.name === value.attributes.name);
+            console.log(dataType);
+            if(dataType[0] !== undefined){
+              return <LiveDevice add={dataType[0].add} value={value} key={value.id} />
+            } else {
+              return <LiveDevice add={''} value={value} key={value.id} />
+              }
+            }
           )}
         </div>
       )

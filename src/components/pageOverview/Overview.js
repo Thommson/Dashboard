@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import LiveDeviceDataList from './LiveDeviceDataList';
 import LiveWeatherData from './LiveWeatherData';
 import DeviceOptions from './DeviceOptions';
+import DeviceOverviewChart from './DeviceOverviewChart';
+import ChartList from '../pageCompare/ChartList';
+
 class Overview extends Component {
 
   constructor(props){
@@ -35,17 +38,21 @@ class Overview extends Component {
                             <DeviceOptions device={device} key={device.id} />
                             )}
                           </select>
-                          <LiveDeviceDataList selectedDevice={this.state.selectedDevice} deviceArray={this.props.deviceArray} />
+                          <LiveDeviceDataList dataTypes={this.props.dataTypes} selectedDevice={this.state.selectedDevice} deviceArray={this.props.deviceArray} />
                     </div>
                   </div>
                   <div className="col-1"></div>
                   <div className="col-6 blue-bg-padding-right">
-                    <LiveWeatherData temperature={this.props.temperature} cloudiness={this.props.cloudiness} city={this.props.city} humidity={this.props.humidity} pressure={this.props.pressure} sunset={this.props.sunset} sunrise={this.props.sunrise}/>
+                    <LiveWeatherData weatherData={this.props.deviceArray.find({name: "Current Weather"}).attributes.value} />
                   </div>
                 </div>
 
 
               </div>
+            </div>
+            <DeviceOverviewChart historicalDeviceData={this.props.historicalDeviceData} deviceArray={this.props.deviceArray} selectedDevice={this.state.selectedDevice} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} />
+            <div className="container pinned-chart-list">
+              <ChartList groups={this.props.groups} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} historicalData={this.props.historicalData} charts={this.props.charts} />
             </div>
           </div>
         </div>
@@ -76,6 +83,9 @@ class Overview extends Component {
 
               </div>
             </div>
+
+            <DeviceOverviewChart />
+
           </div>
         </div>
       )

@@ -5,14 +5,14 @@ import sun from '../../images/sun.png'
 class LiveWeatherData extends Component {
 
   render () {
-    if(this.props.temperature !== null){
+    if(this.props.weatherData !== undefined){
       return(
         <div id="weather-data" className="row">
           <div className="col">
             <div className="row white-text">
               <div className="col-6">
                 <div className="row">
-                  <div className="col font-3"><div className="temp-box">{this.props.temperature}°C</div><img className="weather-icon" src={sun} alt="" /></div>
+                  <div className="col font-3"><div className="temp-box">{Math.round(this.props.weatherData.find({name: "temperature"}).attributes.state.models[0].attributes.data)}°C</div><img className="weather-icon" src={sun} alt="" /></div>
                 </div>
                 <div className="row margin-top-s">
                   <div className="col">
@@ -25,7 +25,7 @@ class LiveWeatherData extends Component {
 
               <div className="col-5">
                 <div className="row">
-                   <div className="col font-3">{this.props.city}</div>
+                   <div className="col font-3">{this.props.weatherData.find({name: "city"}).attributes.state.models[0].attributes.data}</div>
 
                 </div>
                 <div className="row margin-top-s">
@@ -35,12 +35,10 @@ class LiveWeatherData extends Component {
             </div>
 
               <div className="row margin-top-m white-text">
-                <div className="col-2">{this.props.humidity}%</div>
-                <div className="col-2">{this.props.windspeed}m/s</div>
-                <div className="col-2">{this.props.cloudiness}%</div>
-                <div className="col-2" id="sunrise"></div>
-                <div className="col-2" id="sunset"></div>
-                <div className="col-2">{this.props.pressure}</div>
+                <div className="col-2">{this.props.weatherData.find({name: "cloudiness"}).attributes.state.models[0].attributes.data}%</div>
+                <div className="col-2">{this.props.weatherData.find({name: "humidity"}).attributes.state.models[0].attributes.data}%</div>
+                <div className="col-2">{this.props.weatherData.find({name: "wind speed"}).attributes.state.models[0].attributes.data}m/s</div>
+                <div className="col-2">{this.props.weatherData.find({name: "pressure"}).attributes.state.models[0].attributes.data}hPa</div>
               </div>
 
           </div>

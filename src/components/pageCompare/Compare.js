@@ -6,17 +6,30 @@ import ChartList from './ChartList';
 
 class Compare extends Component {
 
-
-  getChartValues = () => {
-    //var valueId1 = document.getElementById('select-1');
-    //var valueId1 = document.getElementById('select-1');
+  switch = () => {
     let select1 = document.getElementById('select-1');
     let select2 = document.getElementById('select-2');
-    var valueId1 = select1.options[select1.selectedIndex].value;
-    var valueId2 = select2.options[select2.selectedIndex].value;
-    this.props.createChart(valueId1, valueId2)
+    let holder = select1.selectedIndex;
+    select1.options[select2.selectedIndex].selected = 'selected';
+    select2.options[holder].selected = 'selected';
   }
-
+  getChartValues = () => {
+    let select1 = document.getElementById('select-1');
+    let select2 = document.getElementById('select-2');
+    var values = []
+    values.push(select1.options[select1.selectedIndex].value)
+    values.push(select2.options[select2.selectedIndex].value)
+    var devices = [];
+    devices.push(select1.options[select1.selectedIndex].getAttribute('devicename'));
+    devices.push(select2.options[select2.selectedIndex].getAttribute('devicename'));
+    var groups = [];
+    groups.push(select1.options[select1.selectedIndex].getAttribute('groupname'));
+    groups.push(select2.options[select2.selectedIndex].getAttribute('groupname'));
+    var valueids = [];
+    valueids.push(select1.options[select1.selectedIndex].getAttribute('valueid'));
+    valueids.push(select2.options[select2.selectedIndex].getAttribute('valueid'));
+    this.props.createChart(values, devices, valueids, groups);
+  }
 
   render () {
     if(this.props.deviceArray !== undefined && this.props.historicalData !== undefined){
@@ -34,7 +47,7 @@ class Compare extends Component {
                     </select>
                   </div>
                   <div className="col-2">
-                    <button className="align-self-end" id="switch-button">Switch</button>
+                    <button onClick={this.switch} className="align-self-end" id="switch-button">Switch</button>
                   </div>
                   <div className="col align-self-end">
                     <select id="select-2" className="device-select">
@@ -48,17 +61,16 @@ class Compare extends Component {
 
               </div>
           </div>
-          { this.props.charts.map((chart) =>
-          <ChartList historicalData={this.props.historicalData} chart={chart} key={chart.id} />
-          )}
-
+          <div className="container">
+            <ChartList groups={this.props.groups} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} historicalData={this.props.historicalData} charts={this.props.charts} />
+          </div>
         </div>
       )
     } else {
       return(
         <div id="compare">
           <div className="col blue-bg-padding">
-              <h2 className="font-2 compare-h2">Select Devices</h2>
+              <h2 className="font-2 compare-h2">Select Values</h2>
               <div className="container">
                 <div className="row">
                   <div className="col align-self-end">
