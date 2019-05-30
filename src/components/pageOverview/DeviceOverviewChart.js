@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import { VictoryChart, VictoryLine, VictoryGroup, VictoryAxis, VictoryTheme } from 'victory';
 import Values from './Values';
 import TimeValues from './TimeValues';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+
 let historicalSave;
 class DeviceOverviewChart extends Component {
 
@@ -56,7 +61,7 @@ class DeviceOverviewChart extends Component {
 
  }
  async nextDate(){
-   this.props.saveSelect(document.getElementById("device-overview-select2").selectedIndex)
+   this.props.saveSelect(document.getElementById("device-overview-select1").selectedIndex)
    for(let i = 0; i < this.props.historicalDeviceData.length; i++){
      if(this.props.historicalDeviceData[i].query === this.props.savedQuery){
        historicalSave = this.props.historicalDeviceData[i];
@@ -91,6 +96,7 @@ class DeviceOverviewChart extends Component {
        let sort = "week";
        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
      }
+     console.log(query)
      this.props.saveQuery(query);
      let devices = [];
      devices.push(this.props.selectedDevice);
@@ -106,7 +112,7 @@ class DeviceOverviewChart extends Component {
  }
 
  async prevDate(){
-   this.props.saveSelect(document.getElementById("device-overview-select2").selectedIndex)
+   this.props.saveSelect(document.getElementById("device-overview-select1").selectedIndex)
    for(let i = 0; i < this.props.historicalDeviceData.length; i++){
      if(this.props.historicalDeviceData[i].query === this.props.savedQuery){
        historicalSave = this.props.historicalDeviceData[i];
@@ -150,7 +156,7 @@ class DeviceOverviewChart extends Component {
 
  }
  componentDidUpdate(){
-   if(this.props.historicalDeviceData !== undefined){
+   if(this.props.historicalDeviceData !== undefined && this.props.savedQuery){
      for(let i = 0; i < this.props.historicalDeviceData.length; i++){
        if(this.props.historicalDeviceData[i].query === this.props.savedQuery){
          historicalSave = this.props.historicalDeviceData[i];
@@ -170,22 +176,23 @@ class DeviceOverviewChart extends Component {
             <div className="container">
               <div className="row pad-40">
                 <div className="overview-row">
-                  <h2 className="font-4">Device Name1</h2>
+                  <h2 className="font-4">{this.props.selectedDevice}</h2>
 
                   {this.props.historicalDeviceData.map((data) => {
+                    let num;
                     for(let i = 0; i < this.props.historicalDeviceData.length; i++){
                       if(this.props.historicalDeviceData[i].query === this.props.savedQuery){
+                        num = i;
                         historicalSave = this.props.historicalDeviceData[i];
                         console.log(historicalSave);
+                        return (
+                          <div><button onClick={this.prevDate}><FontAwesomeIcon icon={faChevronLeft} /></button>{new Date(historicalSave.startTime).getDate()}-{new Date(historicalSave.startTime).getMonth()+1}-{new Date(historicalSave.startTime).getFullYear()}<button onClick={this.nextDate}><FontAwesomeIcon icon={faChevronRight} /></button></div>
+                        )
+                        } else {
+                        return null
+                        }
                       }
-                    }
-                    if(historicalSave !== undefined){
-                      return (
-                        <div><button onClick={this.prevDate}>Prev</button>{new Date(historicalSave.startTime).getDate()}-{new Date(historicalSave.startTime).getMonth()+1}-{new Date(historicalSave.startTime).getFullYear()}<button onClick={this.nextDate}>Next</button></div>
-                      )
-                    } else {
-                      return null
-                    }})
+                    })
                   }
                   <select onChange={this.getHistoricalData} id="device-overview-select1" className="select">
                     { optionValues.map((value, index) => {
@@ -262,11 +269,12 @@ class DeviceOverviewChart extends Component {
             <div className="container">
               <div className="row pad-40">
                 <div className="overview-row">
-                  <h2 className="font-4">Device Name2</h2>
+                  <h2 className="font-4">{this.props.selectedDevice}</h2>
                     <select onChange={this.getHistoricalData} id="device-overview-select1" className="select">
-                      <option value="day">Day</option>
-                      <option value="week">Week</option>
-                      <option value="month">Month</option>
+                      { optionValues.map((value, index) => {
+                          return <TimeValues select={this.props.select} value={value} index={index}/>
+                        })
+                      }
                     </select>
                     <select id="device-overview-select2" select2={this.props.select2} className="select">
 

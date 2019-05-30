@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import ValueGroupOption from './ValueGroupOption';
 import ChartList from './ChartList';
 
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons'
 
 class Compare extends Component {
 

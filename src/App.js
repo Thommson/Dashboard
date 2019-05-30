@@ -8,13 +8,14 @@ import Error404 from './components/pageError404/Error404';
 import Navbar from './components/navbar/Navbar';
 
 import {getAllDevices} from './Wappsto';
+import {getDataMaster} from './Wappsto';
 import './setupProxy';
 
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
 
 var deviceArray;
-
+var userData;
 class App extends Component {
   constructor(props) {
     super(props);
@@ -50,7 +51,8 @@ class App extends Component {
       unassignedDevices: [],
       charts: [],
       historicalData: [],
-      savedQuery: ''
+      savedQuery: '',
+      userData: ''
     }
     this.initApp = this.initApp.bind(this);
     this.addListeners = this.addListeners.bind(this);
@@ -59,15 +61,29 @@ class App extends Component {
 
   async initApp() {
     new Promise(async (resolve, reject) => {
-        deviceArray = await getAllDevices();
-        resolve(deviceArray);
+        userData = await getDataMaster();
+        this.setState({
+          charts: userData.attributes.charts,
+          groups: userData.attributes.groups,
+          unassignedDevices: userData.attributes.unassignedDevices
+        })
+        console.log(userData);
+        resolve(userData);
+    }).then(async (userData) => {
+      deviceArray = await getAllDevices();
+      return deviceArray;
     }).then((deviceArray) => {
+
         console.log(deviceArray)
-        //this.getHistoricalDataMaster(deviceArray);
-        this.setState({deviceArray: deviceArray});
+        this.setState({ deviceArray: deviceArray });
         return deviceArray;
     }).then((deviceArray) => {
-      this.countUnassignedDevicesMaster(deviceArray)
+
+        console.log("HERE")
+        if(userData.attributes.unassignedDevices.length !== 0){
+        this.countUnassignedDevicesMaster(deviceArray)
+      }
+
         for( let i = 0; i < deviceArray.models.length; i++){
           for(let j = 0; j < deviceArray.models[i].attributes.value.models.length; j++){
             //SET THE MODEL FROM 0 BACK TO i
@@ -77,6 +93,7 @@ class App extends Component {
         }
     });
   }
+
   navActiveMaster = (active) => {
     this.setState({ navState: active })
   }
@@ -90,6 +107,7 @@ class App extends Component {
   createGroupMaster = (newGroup) => {
     let groupsCopy = Object.assign([], this.state.groups);
     groupsCopy.push(newGroup);
+    userData.save({ groups: groupsCopy }, {patch: true});
     this.setState({ groups: groupsCopy });
   }
   assignDeviceToGroupMaster = (groupId, deviceId) => {
@@ -97,17 +115,19 @@ class App extends Component {
     for(let i = 0; i < this.state.groups.length; i++){
       if(groupsCopy[i].id === groupId){
         groupsCopy[i].assignedDevices.push(deviceId);
+        userData.save({ groups: groupsCopy }, {patch: true});
         this.setState({ groups: groupsCopy });
         return;
       }
     }
   }
   countUnassignedDevicesMaster = (props) => {
-    let newArray = [];
-    for(let j = 0; j < deviceArray.models.length; j++){
-        newArray.push(deviceArray.models[j].attributes.meta.id);
-      }
-    this.setState({ unassignedDevices: newArray });
+      let newArray = [];
+      for(let j = 0; j < deviceArray.models.length; j++){
+          newArray.push(deviceArray.models[j].attributes.meta.id);
+        }
+      userData.save({ unassignedDevices: newArray }, {patch: true});
+      this.setState({ unassignedDevices: newArray });
   }
   removeDeviceFromGroup = (deviceId, groupId) => {
     let groupsCopy = Object.assign([], this.state.groups);
@@ -122,19 +142,23 @@ class App extends Component {
         groupsCopy[i].assignedDevices = newAssignedDevices;
       }
       var newUnassignedDevices = unassignedDevicesCopy.filter(unassignedDevice => unassignedDevice !== deviceId);
+      userData.save({ unassignedDevices: newUnassignedDevices }, {patch: true});
       this.setState({ unassignedDevices: newUnassignedDevices });
     }
+    userData.save({ groups: groupsCopy }, {patch: true});
     this.setState({ groups: groupsCopy });
   }
   removeDeviceFromUnassigned = (deviceId, groupId) => {
     let unassignedDevicesCopy = Object.assign([], this.state.unassignedDevices);
     if(!unassignedDevicesCopy.includes(deviceId)){
       var newUnassignedDevices = unassignedDevicesCopy.filter(unassignedDevice => unassignedDevice !== deviceId);
+      userData.save({ unassignedDevices: newUnassignedDevices }, {patch: true});
       this.setState({ unassignedDevices: newUnassignedDevices });
     }
     if(groupId === "unassigned"){
       this.removeDeviceFromGroup(deviceId, groupId)
       unassignedDevicesCopy.push(deviceId);
+      userData.save({ unassignedDevices: unassignedDevicesCopy }, {patch: true});
       this.setState({ unassignedDevices: unassignedDevicesCopy });
       return;
     }
@@ -177,7 +201,9 @@ class App extends Component {
 
 
   }
-
+  componentDidMount(){
+    //this.initApp()
+  }
   createChart = (values, devices, valueids, groups) => {
     let chartsCopy = Object.assign([], this.state.charts);
     let newChart = {};
@@ -187,6 +213,7 @@ class App extends Component {
     newChart.groups = groups
     newChart.query = {};
     chartsCopy.push(newChart);
+    userData.save({ charts: chartsCopy }, {patch: true});
     this.setState({ charts: chartsCopy });
   }
   updateChartMaster = (valueids, query, startTime, endTime) => {
@@ -200,9 +227,8 @@ class App extends Component {
       }
     }
     console.log(chartsCopy);
-    this.setState({
-      charts: chartsCopy
-    })
+    userData.save({ charts: chartsCopy }, {patch: true});
+    this.setState({ charts: chartsCopy })
   }
   saveQuery = (query) => {
     this.setState({ savedQuery: query});

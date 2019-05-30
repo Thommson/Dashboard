@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 
 import { VictoryChart, VictoryLine, VictoryGroup, VictoryAxis, VictoryTheme } from 'victory';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+
 class ChartCard extends Component {
   constructor(props){
     super(props)
@@ -125,7 +129,7 @@ class ChartCard extends Component {
 
             <div className="row card-pad">
               <h3>Comparing {this.props.chart.groups[0]} {this.props.chart.values[0]} with {this.props.chart.groups[1]}  {this.props.chart.values[1]}</h3>
-              <button onClick={this.prevDate}>Prev</button>{new Date(this.props.chart.endTime).getDate()}-{new Date(this.props.chart.endTime).getMonth()+1}-{new Date(this.props.chart.endTime).getFullYear()}<button  onClick={this.nextDate}>Next</button>
+              <button onClick={this.prevDate}><FontAwesomeIcon icon={faChevronLeft} /></button>{new Date(this.props.chart.endTime).getDate()}-{new Date(this.props.chart.endTime).getMonth()+1}-{new Date(this.props.chart.endTime).getFullYear()}<button  onClick={this.nextDate}><FontAwesomeIcon icon={faChevronRight} /></button>
               <select onChange={this.getHistoricalData} id={this.props.timeGap} className="select">
                 <option id={"option-" + this.props.cardId} value="def">Time gap</option>
                 <option value="day">Day</option>

@@ -43,7 +43,7 @@ class GroupRow extends Component {
       const opacityHover = hovered ? '1' : '0.5';
 
       return connectDropTarget(
-        <div className="group-row row" >
+        <div className="group-row row height-323" >
           <div className="group-tab-color" style={{opacity: opacityHover, background: backgroundHover}}></div>
           <div className="group-row-10" style={{background: backgroundHover}}>
           </div>
@@ -58,7 +58,7 @@ class GroupRow extends Component {
       )
     } else {
       return(
-        <div className="group-row row">
+        <div className="group-row row height-323">
           <div className="group-tab-color"></div>
           <div className="container">
             <h2 className="font-3">{this.props.group.name}</h2>

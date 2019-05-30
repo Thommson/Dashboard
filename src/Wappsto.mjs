@@ -49,3 +49,14 @@ function getDevices(networkCollection){
   console.log(allDeviceArray);
   return allDeviceArray;
 }
+
+
+export async function getDataMaster(){
+  console.log('data master started')
+  let userData = await wappsto.get('data', {}, {
+      expand: 5,
+      quantity: 1,
+      subscribe: true
+      });
+      return userData.first();
+    }

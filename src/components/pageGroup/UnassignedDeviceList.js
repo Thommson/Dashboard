@@ -41,7 +41,7 @@ class UnassignedDeviceList extends Component {
     if(this.props.deviceArray !== undefined){
         const { connectDropTarget, hovered, device } = this.props;
       return connectDropTarget(
-        <div id="unassigned-device-list" className="row">
+        <div id="unassigned-device-list" className="row height-323">
           <div className="col">
             <div className="container">
               <h1 className="row font-3">Unassigned Devices</h1>
@@ -59,14 +59,14 @@ class UnassignedDeviceList extends Component {
       )
     } else {
       return(
-        <div id="unassigned-device-list" className="row">
-          <div className="col">
-            <div className="container">
+        <div id="unassigned-device-list" className="row height-323">
+          <div className="col ">
+            <div className="container ">
               <h1 className="row font-3">Unassigned Devices</h1>
             </div>
             <div className="container">
-              <div className="unassigned-device-list-row">
-                <DeviceTest />
+              <div className="unassigned-device-list-row ">
+
               </div>
             </div>
           </div>
