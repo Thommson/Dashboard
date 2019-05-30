@@ -9,6 +9,8 @@ class ChartCard extends Component {
       status: ''
     }
     this.getHistoricalData= this.getHistoricalData.bind(this);
+    this.prevDate= this.prevDate.bind(this);
+    this.nextDate= this.nextDate.bind(this);
   }
   getMonday = (d) => {
     d = new Date(d);
@@ -22,24 +24,88 @@ class ChartCard extends Component {
       document.getElementById("option-" + this.props.cardId).style.display = 'none';
       let select = document.getElementById(this.props.timeGap);
       let query;
+      let startTime;
       let d = new Date();
-      let currentTime = d.toISOString();
+      let endD = new Date(new Date().setHours(23,59,59,999)).getTime();
+      let endTime = new Date(endD).toISOString();
       if(select.options[select.selectedIndex].value === 'day'){
-        let endTime = new Date(d.setHours(0,0,0,0)).toISOString();
+        startTime = new Date(d.setHours(0,0,0,0)).toISOString();
         let sort = "hour";
-        query = "start=" + endTime + "&end=" + currentTime + "&group_by=" + sort + "&operation=avg"
+        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
       } else if(select.options[select.selectedIndex].value === 'week'){
         let time = this.getMonday(new Date());
-        let endTime = new Date(new Date(time).setHours(0,0,0,0)).toISOString();
+        startTime = new Date(new Date(time).setHours(0,0,0,0)).toISOString();
         let sort = "day";
-        query = "start=" + endTime + "&end=" + currentTime + "&group_by=" + sort + "&operation=avg"
+        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
       } else if(select.options[select.selectedIndex].value === 'month'){
-        let endTime = new Date(d.setDate(1)).toISOString();
+        startTime = new Date(d.setDate(1)).toISOString();
         let sort = "week";
-        query = "start=" + endTime + "&end=" + currentTime + "&group_by=" + sort + "&operation=avg"
+        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
       }
-      this.props.getHistoricalDataMaster(query, this.props.chart.devices, this.props.chart.values);
-      this.props.updateChartMaster(this.props.chart.valueids, query);
+      console.log(query, this.props.chart.devices, this.props.chart.values, startTime, endTime)
+      this.props.getHistoricalDataMaster(query, this.props.chart.devices, this.props.chart.values, startTime, endTime);
+      this.props.updateChartMaster(this.props.chart.valueids, query, startTime, endTime);
+  }
+
+  async nextDate(){
+
+    if(new Date(new Date(this.props.chart.endTime).getTime()+(60000*60*24)).getTime() >= new Date().getTime()){
+      console.log("Negated")
+    } else {
+      console.log(new Date(this.props.chart.startTime).getTime());
+      console.log(new Date().getTime());
+      let select = document.getElementById(this.props.timeGap);
+      let query;
+      let startTime;
+      let endTime;
+      if(select.options[select.selectedIndex].value === 'day'){
+        startTime = new Date(new Date(this.props.chart.startTime).getTime()+(60000*60*24)).toISOString();
+        endTime = new Date(new Date(this.props.chart.endTime).getTime()+(60000*60*24)).toISOString();
+        let sort = "hour";
+        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
+      } else if(select.options[select.selectedIndex].value === 'week'){
+        let time = this.getMonday(new Date());
+        startTime = new Date(new Date(this.props.chart.startTime).getTime()+(60000*60*24*7)).toISOString();
+        endTime = new Date(new Date(this.props.chart.endTime).getTime()+(60000*60*24*7)).toISOString();
+        let sort = "day";
+        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
+      } else if(select.options[select.selectedIndex].value === 'month'){
+        let newMonth = new Date(this.props.chart.startTime).getMonth() + 1;
+        startTime = new Date(new Date(this.props.chart.startTime).setMonth(newMonth)).toISOString();
+        endTime = new Date(new Date(this.props.chart.endTime).setMonth(newMonth)).toISOString();
+        let sort = "week";
+        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
+      }
+      this.props.getHistoricalDataMaster(query, this.props.chart.devices, this.props.chart.values, startTime, endTime);
+      this.props.updateChartMaster(this.props.chart.valueids, query, startTime, endTime);
+    }
+  }
+
+  async prevDate(){
+      let select = document.getElementById(this.props.timeGap);
+      let query;
+      let startTime;
+      let endTime;
+      if(select.options[select.selectedIndex].value === 'day'){
+        startTime = new Date(new Date(this.props.chart.startTime).getTime()-(60000*60*24)).toISOString();
+        endTime = new Date(new Date(this.props.chart.endTime).getTime()-(60000*60*24)).toISOString();
+        let sort = "hour";
+        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
+      } else if(select.options[select.selectedIndex].value === 'week'){
+        let time = this.getMonday(new Date());
+        startTime = new Date(new Date(this.props.chart.startTime).getTime()-(60000*60*24*7)).toISOString();
+        endTime = new Date(new Date(this.props.chart.startTime).getTime()).toISOString();
+        let sort = "day";
+        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
+      } else if(select.options[select.selectedIndex].value === 'month'){
+        let newMonth = new Date(this.props.chart.startTime).getMonth() - 1;
+        startTime = new Date(new Date(this.props.chart.startTime).setMonth(newMonth)).toISOString();
+        endTime = new Date(new Date(this.props.chart.endTime).setMonth(newMonth)).toISOString();
+        let sort = "week";
+        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
+      }
+      this.props.getHistoricalDataMaster(query, this.props.chart.devices, this.props.chart.values, startTime, endTime);
+      this.props.updateChartMaster(this.props.chart.valueids, query, startTime, endTime);
   }
 
 
@@ -52,7 +118,6 @@ class ChartCard extends Component {
     let avg2;
     let maxima;
     let gap;
-
     if(this.props.historicalData !== undefined){
       return(
         <div className="chart-card row card">
@@ -60,6 +125,7 @@ class ChartCard extends Component {
 
             <div className="row card-pad">
               <h3>Comparing {this.props.chart.groups[0]} {this.props.chart.values[0]} with {this.props.chart.groups[1]}  {this.props.chart.values[1]}</h3>
+              <button onClick={this.prevDate}>Prev</button>{new Date(this.props.chart.endTime).getDate()}-{new Date(this.props.chart.endTime).getMonth()+1}-{new Date(this.props.chart.endTime).getFullYear()}<button  onClick={this.nextDate}>Next</button>
               <select onChange={this.getHistoricalData} id={this.props.timeGap} className="select">
                 <option id={"option-" + this.props.cardId} value="def">Time gap</option>
                 <option value="day">Day</option>
@@ -69,7 +135,7 @@ class ChartCard extends Component {
             </div>
 
             <div className="row">
-              <VictoryChart padding={{top: 0, bottom: 40, left: 50, right: 50}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material} id={this.props.cardId} className="chart-card-content">
+              <VictoryChart style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} padding={{top: 0, bottom: 40, left: 50, right: 50}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material} id={this.props.cardId} className="chart-card-content">
 
                 { this.props.historicalData.map((data) => {
                   if(this.props.chart.valueids[0] === data.meta.id && this.props.chart.query === data.query){
@@ -79,9 +145,7 @@ class ChartCard extends Component {
                       for(let i = 0; i < data.data.length; i++){
                         sum += data.data[i].avg;
                       }
-
                       avg1 = sum/data.data.length;
-                      console.log(avg1);
                     }
                   if(this.props.chart.valueids[1] === data.meta.id && this.props.chart.query === data.query){
                       maxima2 = Math.max(...data.data.map((d) => d.avg));
@@ -91,9 +155,7 @@ class ChartCard extends Component {
                         sum += data.data[i].avg;
                       }
                       avg2 = sum/data.data.length;
-                      console.log(avg2);
                     }
-
                   })
                 }
                 { this.props.historicalData.map((data) => {
@@ -104,29 +166,24 @@ class ChartCard extends Component {
                     maxima = Math.round(maxima2);
                   }
                   if(maxima > 0 && maxima <= 10){
-                    console.log("1")
                     gap = 1;
                     maxima = maxima + (1.5*gap);
                   } else if(maxima > 10 && maxima <= 100){
-                    console.log("10")
                     gap = 10;
                     maxima = maxima + (1.5*gap);
                   } else if(maxima > 100){
-                    console.log("100")
                     gap = 100;
                     maxima = maxima + (1.5*gap);
-                  }
-                  console.log(maxima);
-                  console.log(gap)
+                    }
                   }
                 )}
 
                 { this.props.historicalData.map((data) => {
                   if(this.props.chart.valueids[0] === data.meta.id && this.props.chart.query === data.query){
                     if(maxima1 - (10 * maxima2) >= 0 || gap <= 10){
-                      return  <VictoryLine sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg)} data={data.data}/>
+                      return  <VictoryLine style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg)} data={data.data}/>
                     } else {
-                      return <VictoryLine sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg * 10)} data={data.data}/>
+                      return <VictoryLine style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg * 10)} data={data.data}/>
                     }
                   } else {
                       return null
@@ -136,9 +193,9 @@ class ChartCard extends Component {
                 { this.props.historicalData.map((data) => {
                   if(this.props.chart.valueids[1] === data.meta.id && this.props.chart.query === data.query){
                     if(maxima2 - (10 * maxima1) >= 0 || gap <= 10){
-                      return  <VictoryLine sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg)} data={data.data}/>
+                      return  <VictoryLine style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg)} data={data.data}/>
                     } else {
-                      return <VictoryLine sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg * 10)} data={data.data}/>
+                      return <VictoryLine style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg * 10)} data={data.data}/>
                     }
                   } else {
                       return null
@@ -151,15 +208,12 @@ class ChartCard extends Component {
                   let newArray = []
                   if(this.props.chart.valueids[0] === data.meta.id && this.props.chart.query === data.query){
                     for(let i = 0; i <= maxima; i = i + gap){
-                      console.log(i);
                       newArray.push(i);
                     }
-
-                    console.log(newArray);
                     if(maxima1 - (10 * maxima2) >= 0 || gap <= 10){
-                      return  <VictoryAxis orientation="left" standalone={false} dependentAxis tickFormat={(y) => y}/>
+                      return  <VictoryAxis style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} orientation="left" standalone={false} dependentAxis tickFormat={(y) => y}/>
                     } else {
-                      return  <VictoryAxis orientation="left" standalone={false} dependentAxis tickFormat={(y) => y / 10}/>
+                      return  <VictoryAxis style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} orientation="left" standalone={false} dependentAxis tickFormat={(y) => y / 10}/>
                       }
                     }
                   })
@@ -168,14 +222,12 @@ class ChartCard extends Component {
                   let newArray = []
                   if(this.props.chart.valueids[0] === data.meta.id && this.props.chart.query === data.query){
                       for(let i = 0; i <= maxima; i = i + gap){
-                        console.log(i);
                         newArray.push(i);
                       }
-                  console.log(newArray);
                   if(maxima2 - (10 * maxima1) >= 0 || gap <= 10){
-                        return <VictoryAxis orientation="right" standalone={false} dependentAxis tickFormat={(y) => y}/>
+                        return <VictoryAxis style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} orientation="right" standalone={false} dependentAxis tickFormat={(y) => y}/>
                       } else {
-                        return <VictoryAxis orientation="right" standalone={false} dependentAxis tickFormat={(y) => y / 10}/>
+                        return <VictoryAxis style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} orientation="right" standalone={false} dependentAxis tickFormat={(y) => y / 10}/>
                       }
                     } else {
                       return null
@@ -183,7 +235,7 @@ class ChartCard extends Component {
                   }
                 )}
 
-                    <VictoryAxis standalone={false} tickFormat={(x) => new Date(x).getHours()}/>
+                    <VictoryAxis style={{ data: {fontSize: 10}, labels: {fontSize: 10}}} standalone={false} tickFormat={(x) => new Date(x).getHours() + 1}/>
               </VictoryChart>
             </div>
 

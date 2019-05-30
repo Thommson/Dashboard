@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import LiveDeviceDataList from './LiveDeviceDataList';
 import LiveWeatherData from './LiveWeatherData';
 import DeviceOptions from './DeviceOptions';
+import DeviceOverview from './DeviceOverview';
 import DeviceOverviewChart from './DeviceOverviewChart';
 import ChartList from '../pageCompare/ChartList';
 
@@ -10,16 +11,19 @@ class Overview extends Component {
   constructor(props){
     super(props)
     this.state = {
-      selectedDevice: "Current Weather"
+      selectedDevice: "Current Weather",
+      select1: 0,
+      select2: 0
     }
   }
 
   selectDevice = (event) => {
-
     this.setState({
       selectedDevice: event.target.value
     });
-
+  }
+  saveSelect = (data) => {
+    this.setState({select: data})
   }
 
   render () {
@@ -50,7 +54,8 @@ class Overview extends Component {
 
               </div>
             </div>
-            <DeviceOverviewChart historicalDeviceData={this.props.historicalDeviceData} deviceArray={this.props.deviceArray} selectedDevice={this.state.selectedDevice} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} />
+            <DeviceOverviewChart saveSelect={this.saveSelect} select={this.state.select} savedQuery={this.props.savedQuery} saveQuery={this.props.saveQuery} historicalDeviceData={this.props.historicalDeviceData} deviceArray={this.props.deviceArray} selectedDevice={this.state.selectedDevice} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} />
+
             <div className="container pinned-chart-list">
               <ChartList groups={this.props.groups} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} historicalData={this.props.historicalData} charts={this.props.charts} />
             </div>

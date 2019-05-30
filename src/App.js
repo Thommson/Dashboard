@@ -50,7 +50,7 @@ class App extends Component {
       unassignedDevices: [],
       charts: [],
       historicalData: [],
-
+      savedQuery: ''
     }
     this.initApp = this.initApp.bind(this);
     this.addListeners = this.addListeners.bind(this);
@@ -140,7 +140,8 @@ class App extends Component {
     }
   }
 
-  async getHistoricalDataMaster(query, devices, values){
+  async getHistoricalDataMaster(query, devices, values, startTime, endTime){
+    console.log({query, devices, values, startTime, endTime});
     let historicalDataCopy =  Object.assign([], this.state.historicalData);
       let deviceArray = this.state.deviceArray;
       for (let i = 0; i < devices.length; i++) {
@@ -149,9 +150,12 @@ class App extends Component {
             "query": query,
             "success": (model, response, XHRResponse) => {
               response.query = query;
+              response.startTime = startTime;
+              response.endTime = endTime;
               response.dataType = deviceArray.find({name: devices[i]}).attributes.value.find({name: values[i]}).attributes.type;
               response.dataName = deviceArray.find({name: devices[i]}).attributes.value.find({name: values[i]}).attributes.name;
               historicalDataCopy.push(response);
+              console.log(historicalDataCopy)
               return historicalDataCopy
             },
             "error": (model, XHRResponse) => {
@@ -162,13 +166,13 @@ class App extends Component {
       }
       if(devices.length === 1 && values.length === 1) {
         console.log(devices.length);
+        console.log(historicalDataCopy)
         this.setState({ historicalDeviceData: historicalDataCopy });
-        return
       }
       if(devices.length === 2 && values.length === 2){
         console.log(devices.length);
+        console.log(historicalDataCopy)
         this.setState({ historicalData: historicalDataCopy });
-        return
       }
 
 
@@ -185,12 +189,14 @@ class App extends Component {
     chartsCopy.push(newChart);
     this.setState({ charts: chartsCopy });
   }
-  updateChartMaster = (valueids, query) => {
+  updateChartMaster = (valueids, query, startTime, endTime) => {
     console.log(valueids)
     let chartsCopy = this.state.charts;
     for(let i = 0; i < this.state.charts.length; i++){
       if(this.state.charts[i].valueids[0] === valueids[0] && this.state.charts[i].valueids[1] === valueids[1] && this.state.charts[i].query !== query){
         chartsCopy[i].query = query
+        chartsCopy[i].startTime = startTime
+        chartsCopy[i].endTime = endTime
       }
     }
     console.log(chartsCopy);
@@ -198,21 +204,26 @@ class App extends Component {
       charts: chartsCopy
     })
   }
+  saveQuery = (query) => {
+    this.setState({ savedQuery: query});
+  }
 
   render() {
-    return (<div className="container-fluid">
+    return (
+      <div className="container-fluid">
       <BrowserRouter>
         <Navbar navState={this.state.navState} navActiveMaster={this.navActiveMaster}/>
         <button onClick={this.initApp}>Refresh</button>
 
         <Switch>
-          <Route path='/' render={() => <Overview dataTypes={this.state.dataTypes} deviceArray={this.state.deviceArray} updateChartMaster={this.updateChartMaster} getHistoricalDataMaster={this.getHistoricalDataMaster} historicalDeviceData={this.state.historicalDeviceData} historicalData={this.state.historicalData} charts={this.state.charts} groups={this.state.groups} />} exact="exact"/>
+          <Route path='/' render={() => <Overview saveQuery={this.saveQuery} savedQuery={this.state.savedQuery} dataTypes={this.state.dataTypes} deviceArray={this.state.deviceArray} updateChartMaster={this.updateChartMaster} getHistoricalDataMaster={this.getHistoricalDataMaster} historicalDeviceData={this.state.historicalDeviceData} historicalData={this.state.historicalData} charts={this.state.charts} groups={this.state.groups} />} exact="exact"/>
           <Route path='/Group' render={() => <Group removeDeviceFromGroup={this.removeDeviceFromGroup} removeDeviceFromUnassigned={this.removeDeviceFromUnassigned} unassignedDevices={this.state.unassignedDevices} assignDeviceToGroupMaster={this.assignDeviceToGroupMaster} deviceArray={this.state.deviceArray} groups={this.state.groups} createGroupMaster={this.createGroupMaster}/>} />
           <Route path='/Compare' render={() => <Compare updateChartMaster={this.updateChartMaster} getHistoricalDataMaster={this.getHistoricalDataMaster} historicalData={this.state.historicalData} charts={this.state.charts} createChart={this.createChart} groups={this.state.groups} deviceArray={this.state.deviceArray} />} exact="exact"/>
           <Route path='*' component={Error404}/>
         </Switch>
       </BrowserRouter>
-    </div>);
+    </div>
+  );
   }
 }
 
