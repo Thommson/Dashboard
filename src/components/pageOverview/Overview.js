@@ -34,9 +34,9 @@ class Overview extends Component {
             <div className="row blue-bg">
               <div className="container">
                 <div className="row">
-                  <div className="col-5">
+                  <div className="col-6">
                     <div id="device-data" className="row blue-bg-padding-left">
-                          <span className="selected-device">Selected Device</span>
+                          <span className="selected-device font-5">Selected Device</span>
                           <select onChange={this.selectDevice} className="device-select">
                             { this.props.deviceArray.models.map((device) =>
                             <DeviceOptions device={device} key={device.id} />
@@ -45,7 +45,6 @@ class Overview extends Component {
                           <LiveDeviceDataList dataTypes={this.props.dataTypes} selectedDevice={this.state.selectedDevice} deviceArray={this.props.deviceArray} />
                     </div>
                   </div>
-                  <div className="col-1"></div>
                   <div className="col-6 blue-bg-padding-right">
                     <LiveWeatherData weatherData={this.props.deviceArray.find({name: "Current Weather"}).attributes.value} />
                   </div>
@@ -57,7 +56,7 @@ class Overview extends Component {
             <DeviceOverviewChart saveSelect={this.saveSelect} select={this.state.select} savedQuery={this.props.savedQuery} saveQuery={this.props.saveQuery} historicalDeviceData={this.props.historicalDeviceData} deviceArray={this.props.deviceArray} selectedDevice={this.state.selectedDevice} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} />
 
             <div className="container pinned-chart-list">
-              <ChartList groups={this.props.groups} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} historicalData={this.props.historicalData} charts={this.props.charts} />
+              <ChartList pinMaster={this.props.pinMaster} groups={this.props.groups} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} historicalData={this.props.historicalData} charts={this.props.charts} />
             </div>
           </div>
         </div>
@@ -69,7 +68,7 @@ class Overview extends Component {
             <div className="row blue-bg">
               <div className="container">
                 <div className="row">
-                  <div className="col-5">
+                  <div className="col-6">
                     <div id="device-data" className="row blue-bg-padding-left">
                       <span className="selected-device">Selected Device</span>
                           <select className="device-select">
@@ -79,8 +78,9 @@ class Overview extends Component {
                     </div>
                   </div>
                   <div className="col-1">
+                    <span id="spliter"></span>
                   </div>
-                  <div className="col-6 blue-bg-padding-right">
+                  <div className="col-5 blue-bg-padding-right">
                     <LiveWeatherData />
                   </div>
                 </div>

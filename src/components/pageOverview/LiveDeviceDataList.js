@@ -12,9 +12,9 @@ class LiveDeviceDataList extends Component {
             let dataType = dataTypesCopy.filter( dataType => dataType.name === value.attributes.name);
 
             if(dataType[0] !== undefined){
-              return <LiveDevice add={dataType[0].add} value={value} key={value.id} />
+              return <LiveDevice deviceNum={this.props.deviceArray.find({name: this.props.selectedDevice}).attributes.value.models.length} add={dataType[0].add} value={value} key={value.id} />
             } else {
-              return <LiveDevice add={''} value={value} key={value.id} />
+              return <LiveDevice deviceNum={this.props.deviceArray.find({name: this.props.selectedDevice}).attributes.value.models.length} add={''} value={value} key={value.id} />
               }
             }
           )}

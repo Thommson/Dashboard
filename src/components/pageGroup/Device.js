@@ -31,7 +31,9 @@ class Device extends Component {
 
       return connectDragSource(
         <div className="device card">
-          <h3>{this.props.device.attributes.name}</h3>
+          <p><span>Device name: </span>{this.props.device.attributes.name}</p>
+          <p><span>Manufacturer: </span>{this.props.device.attributes.manufacturer}</p>
+          <p><span>Tracking: </span>{this.props.device.attributes.value.models.length} values</p>
         </div>
       )
     } else {

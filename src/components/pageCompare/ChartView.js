@@ -7,12 +7,11 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons'
 
-class ChartCard extends Component {
+class ChartView extends Component {
   constructor(props){
     super(props)
     this.state = {
-      status: '',
-      selectedTimeGap: 'none'
+      status: ''
     }
     this.getHistoricalData= this.getHistoricalData.bind(this);
     this.prevDate= this.prevDate.bind(this);
@@ -24,21 +23,18 @@ class ChartCard extends Component {
         diff = d.getDate() - day + (day == 0 ? -6:1);
     return new Date(d.setDate(diff));
   }
-
   getWeekNumber = (d) => {
     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
     var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
     var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
     return weekNo;
-}
-
-
+  }
    async getHistoricalData(){
 
       document.getElementById("option-" + this.props.cardId).style.display = 'none';
       let select = document.getElementById(this.props.timeGap);
-      this.setState({ selectedTimeGap: document.getElementById(this.props.timeGap).options[select.selectedIndex].value});
+      this.setState({ selectedTimeGap: select.options[select.selectedIndex].value});
       let query;
       let startTime;
       let d = new Date();
@@ -65,7 +61,7 @@ class ChartCard extends Component {
 
   async nextDate(){
 
-    if(new Date(new Date(this.props.chart.endTime).getTime()+(60000*60*24)).getTime() >= new Date().getTime()){
+    if(new Date(new Date(this.props.chart.startTime).getTime()+(60000*60*24)).getTime() >= new Date().getTime()){
       console.log("Negated")
     } else {
       console.log(new Date(this.props.chart.startTime).getTime());
@@ -116,7 +112,7 @@ class ChartCard extends Component {
       } else if(select.options[select.selectedIndex].value === 'month'){
         let newMonth = new Date(this.props.chart.startTime).getMonth() - 1;
         startTime = new Date(new Date(this.props.chart.startTime).setMonth(newMonth)).toISOString();
-        endTime = new Date(new Date(this.props.chart.startTime).setMonth(newMonth + 1)).toISOString();
+        endTime = new Date(new Date(this.props.chart.startTime).setMonth(newMonth+1)).toISOString();
         let sort = "week";
         query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
       }
@@ -124,9 +120,30 @@ class ChartCard extends Component {
       this.props.updateChartMaster(this.props.chart.valueids, query, startTime, endTime);
   }
   pin = () => {
-    this.props.pinMaster(this.props.chart.id, false)
+
+    let pinStatus;
+    if(this.props.chart.pinned === true){
+      pinStatus = false
+    } else {
+      pinStatus = true
+    }
+    this.props.pinMaster(this.props.chart.id, pinStatus)
   }
 
+  componentDidUpdate(){
+    if(this.props.chart.pinned === true){
+      document.getElementById('pin-button').classList.add('pin-button-active')
+    } else {
+      document.getElementById('pin-button').classList.remove('pin-button-active')
+    }
+  }
+  componentDidMount(){
+    if(this.props.chart.pinned === true){
+      document.getElementById('pin-button').classList.add('pin-button-active')
+    } else {
+      document.getElementById('pin-button').classList.remove('pin-button-active')
+    }
+  }
   render () {
     let maxima1;
     let maxima2;
@@ -136,12 +153,9 @@ class ChartCard extends Component {
     let avg2;
     let maxima;
     let gap;
-    let unit1;
-    let unit2;
-    if(this.props.historicalData !== undefined && this.props.chart.pinned === true && this.state.selectedTimeGap !== 'none'){
+    if(this.props.historicalData !== undefined){
       return(
-        <div className="chart-card row card">
-          <div className="col">
+        <div id="chart-view">
             <div className="row card-pad">
               <div className="col-5">
                 <div className="inline-left legend-box">
@@ -152,26 +166,28 @@ class ChartCard extends Component {
                   <span className="legend-color-box color-box-2 inline-left"></span>
                   <p className="inline-left">{this.props.chart.groups[1]}  {this.props.chart.values[1]}</p>
                 </div>
+
               </div>
               <div className="col-7">
-                <button className="inline-right pin-button pin-button-active" onClick={this.pin}><FontAwesomeIcon size="xs" icon={ faThumbtack } /></button>
+                <button id="pin-button" className="inline-right pin-button" onClick={this.pin}><FontAwesomeIcon size="xs" icon={ faThumbtack } /></button>
                 <select onChange={this.getHistoricalData} id={this.props.timeGap} className="select inline-right">
                   <option id={"option-" + this.props.cardId} value="def">Time gap</option>
                   <option value="day">Day</option>
                   <option value="week">Week</option>
                   <option value="month">Month</option>
                 </select>
-                <div className="inline-left"><button className="chevron" onClick={this.prevDate}><FontAwesomeIcon icon={faChevronLeft} /></button>{new Date(this.props.chart.endTime).getDate()}-{new Date(this.props.chart.endTime).getMonth()+1}-{new Date(this.props.chart.endTime).getFullYear()}<button className="chevron" onClick={this.nextDate}><FontAwesomeIcon icon={faChevronRight} /></button></div>
+                <div className="inline-left"><button className="chevron" onClick={this.prevDate}><FontAwesomeIcon icon={ faChevronLeft } /></button>{new Date(this.props.chart.startTime).getDate()}-{new Date(this.props.chart.startTime).getMonth()+1}-{new Date(this.props.chart.startTime).getFullYear()}<button className="chevron" onClick={this.nextDate}><FontAwesomeIcon icon={faChevronRight} /></button></div>
+
               </div>
             </div>
+
             <div className="row">
-              <VictoryChart style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} padding={{top: 0, bottom: 40, left: 50, right: 50}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material} id={this.props.cardId} className="chart-card-content">
+              <VictoryChart style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} padding={{top: 0, bottom: 40, left: 50, right: 50}} domainPadding={20} height={250} width={750} theme={VictoryTheme.material} id={this.props.cardId} className="chart-card-content">
 
                 { this.props.historicalData.map((data) => {
                   if(this.props.chart.valueids[0] === data.meta.id && this.props.chart.query === data.query){
                       maxima1 = Math.max(...data.data.map((d) => d.avg));
                       minima1 = Math.min(...data.data.map((d) => d.avg));
-                      unit1 = data.dataUnit;
                       let sum = 0;
                       for(let i = 0; i < data.data.length; i++){
                         sum += data.data[i].avg;
@@ -181,7 +197,6 @@ class ChartCard extends Component {
                   if(this.props.chart.valueids[1] === data.meta.id && this.props.chart.query === data.query){
                       maxima2 = Math.max(...data.data.map((d) => d.avg));
                       minima2 = Math.min(...data.data.map((d) => d.avg));
-                      unit2 = data.dataUnit;
                       let sum = 0;
                       for(let i = 0; i < data.data.length; i++){
                         sum += data.data[i].avg;
@@ -218,12 +233,14 @@ class ChartCard extends Component {
                           <VictoryLine interpolation={"natural"} style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg)} data={data.data}/>
                         </VictoryGroup>
                       )
-                    } else {
+
+                  } else {
                       return(
                         <VictoryGroup color="#5265E1">
                           <VictoryLine interpolation={"natural"} style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg * 10)} data={data.data}/>
                         </VictoryGroup>
-                      )                    }
+                      )
+                    }
                   } else {
                       return null
                     }
@@ -236,12 +253,14 @@ class ChartCard extends Component {
                         <VictoryGroup color="#E0BF51">
                           <VictoryLine interpolation={"natural"} style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg)} data={data.data}/>
                         </VictoryGroup>
-                      )                       } else {
-                        return(
-                          <VictoryGroup color="#E0BF51">
-                            <VictoryLine interpolation={"natural"} style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg * 10)} data={data.data}/>
-                          </VictoryGroup>
-                        )                    }
+                      )
+                     } else {
+                      return(
+                        <VictoryGroup color="#E0BF51">
+                          <VictoryLine interpolation={"natural"} style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg * 10)} data={data.data}/>
+                        </VictoryGroup>
+                      )
+                    }
                   } else {
                       return null
                     }
@@ -256,7 +275,7 @@ class ChartCard extends Component {
                       newArray.push(i);
                     }
                     if(maxima1 - (10 * maxima2) >= 0 || gap <= 10){
-                      return  <VictoryAxis style={{ tickLabels: {fontSize: 9}}} orientation="left" standalone={false} dependentAxis tickFormat={(y) => y + data.dataUnit}/>
+                      return  <VictoryAxis style={{ tickLabels: {fontSize: 9}}}orientation="left" standalone={false} dependentAxis tickFormat={(y) => y + data.dataUnit}/>
                     } else {
                       return  <VictoryAxis style={{ tickLabels: {fontSize: 9}}} orientation="left" standalone={false} dependentAxis tickFormat={(y) => y / 10 + data.dataUnit}/>
                       }
@@ -291,7 +310,7 @@ class ChartCard extends Component {
                     }
                     else if(this.state.selectedTimeGap === 'month'){
                     let date = this.getWeekNumber(new Date(x))
-                     return "week " + date
+                     return "week" + date
                    } else {
                      return null
                    }
@@ -317,75 +336,58 @@ class ChartCard extends Component {
 
                 <div className="row card-pad-lr">
                   <div className="col-4">
-                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(avg1)}{unit1}</span></p>
+                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(avg1)}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(maxima1)}{unit1}</span></p>
+                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(maxima1)}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(minima1)}{unit1}</span></p>
+                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(minima1)}</span></p>
                   </div>
                 </div>
 
                 <div className="row card-pad-lr">
                   <div className="col-4">
-                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(avg2)}{unit2}</span></p>
+                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(avg2)}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(maxima2)}{unit2}</span></p>
+                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(maxima2)}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(minima2)}{unit2}</span></p>
+                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(minima2)}</span></p>
                   </div>
                 </div>
 
               </div>
             </div>
-
-          </div>
         </div>
 
       )
-    } else if(this.state.selectedTimeGap === 'none'){
-      return(
-        <div className="chart-card row card">
-          <div className="col">
-            <div className="row card-pad">
-              <div className="col-5">
-                <div className="inline-left legend-box">
-                  <span className="legend-color-box color-box-1 inline-left"></span>
-                  <p className="inline-left">{this.props.chart.groups[0]} {this.props.chart.values[0]}</p>
-                </div>
-                <div className="inline-left legend-box">
-                  <span className="legend-color-box color-box-2 inline-left"></span>
-                  <p className="inline-left">{this.props.chart.groups[1]}  {this.props.chart.values[1]}</p>
-                </div>
-              </div>
-              <div className="col-7">
-                <button className="inline-right pin-button pin-button-active" onClick={this.pin}><FontAwesomeIcon size="xs" icon={ faThumbtack } /></button>
-                <select onChange={this.getHistoricalData} id={this.props.timeGap} className="select inline-right pulse-time-gap">
-                  <option id={"option-" + this.props.cardId} value="def">Time gap</option>
-                  <option value="day">Day</option>
-                  <option value="week">Week</option>
-                  <option value="month">Month</option>
-                </select>
-                <div className="inline-left"><button className="chevron" onClick={this.prevDate}><FontAwesomeIcon icon={faChevronLeft} /></button>{new Date(this.props.chart.endTime).getDate()}-{new Date(this.props.chart.endTime).getMonth()+1}-{new Date(this.props.chart.endTime).getFullYear()}<button className="chevron" onClick={this.nextDate}><FontAwesomeIcon icon={faChevronRight} /></button></div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col text-center">
-                Select a "Time gap" to get historical data in the chart.
-              </div>
-            </div>
-          </div>
-        </div>
-
-      )
-
     } else {
-      return null
+      return(
+        <div className="chart-card row">
+          <div className="col">
+
+            <div className="row card-pad">
+              <h3>{this.props.chart.groups[0]} {this.props.chart.values[0]} with {this.props.chart.groups[1]}  {this.props.chart.values[1]}</h3>
+              <select id={this.props.chartType}></select>
+              <select onChange={this.getHistoricalData} id={this.props.timeGap}>
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+              </select>
+            </div>
+
+            <div className="row">
+
+            </div>
+
+          </div>
+        </div>
+      )
+
     }
   }
 }
 
-export default ChartCard;
+export default ChartView;

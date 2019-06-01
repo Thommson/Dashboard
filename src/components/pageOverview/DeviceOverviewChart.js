@@ -26,10 +26,17 @@ class DeviceOverviewChart extends Component {
         diff = d.getDate() - day + (day == 0 ? -6:1);
     return new Date(d.setDate(diff));
   }
-
+  getWeekNumber = (d) => {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    return weekNo;
+  }
   async getHistoricalData(){
      this.props.saveSelect(document.getElementById("device-overview-select1").selectedIndex)
      let select = document.getElementById("device-overview-select1");
+     this.setState({ selectedTimeGap: select.options[select.selectedIndex].value});
      let query;
      let startTime;
      let d = new Date();
@@ -92,7 +99,7 @@ class DeviceOverviewChart extends Component {
      } else if(select.options[select.selectedIndex].value === 'month'){
        let newMonth = new Date(historicalSave.startTime).getMonth() + 1;
        startTime = new Date(new Date(historicalSave.startTime).setMonth(newMonth)).toISOString();
-       endTime = new Date(new Date(historicalSave.endTime).setMonth(newMonth)).toISOString();
+       endTime = new Date(new Date(historicalSave.startTime).setMonth(newMonth + 1)).toISOString();
        let sort = "week";
        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
      }
@@ -138,7 +145,7 @@ class DeviceOverviewChart extends Component {
      } else if(select.options[select.selectedIndex].value === 'month'){
        let newMonth = new Date(historicalSave.startTime).getMonth() - 1;
        startTime = new Date(new Date(historicalSave.startTime).setMonth(newMonth)).toISOString();
-       endTime = new Date(new Date(historicalSave.endTime).setMonth(newMonth)).toISOString();
+       endTime = new Date(new Date(historicalSave.startTime).setMonth(newMonth + 1)).toISOString();
        let sort = "week";
        query = "start=" + startTime + "&end=" + endTime + "&group_by=" + sort + "&operation=avg"
      }
@@ -164,9 +171,14 @@ class DeviceOverviewChart extends Component {
        }
      }
    }
-
  }
+
   render () {
+    let maxima;
+    let minima;
+    let avg;
+    let unit;
+    let property;
     if(this.props.deviceArray !== undefined && this.props.historicalDeviceData !== undefined){
       const optionValues = ["day", "week", "month"]
 
@@ -174,51 +186,59 @@ class DeviceOverviewChart extends Component {
         <div id='device-overview-chart'>
           <div className="row">
             <div className="container">
-              <div className="row pad-40">
-                <div className="overview-row">
-                  <h2 className="font-4">{this.props.selectedDevice}</h2>
+              <div className="row pad-40 overview-row">
+                <div className="col-5">
+                  <h2 className="inline-left font-4">{this.props.selectedDevice}</h2>
+                </div>
+                <div className="col-7">
 
                   {this.props.historicalDeviceData.map((data) => {
                     let num;
+                    let tracker = false;
                     for(let i = 0; i < this.props.historicalDeviceData.length; i++){
-                      if(this.props.historicalDeviceData[i].query === this.props.savedQuery){
-                        num = i;
-                        historicalSave = this.props.historicalDeviceData[i];
-                        console.log(historicalSave);
-                        return (
-                          <div><button onClick={this.prevDate}><FontAwesomeIcon icon={faChevronLeft} /></button>{new Date(historicalSave.startTime).getDate()}-{new Date(historicalSave.startTime).getMonth()+1}-{new Date(historicalSave.startTime).getFullYear()}<button onClick={this.nextDate}><FontAwesomeIcon icon={faChevronRight} /></button></div>
-                        )
-                        } else {
-                        return null
+                      if(this.props.historicalDeviceData[i].query === this.props.savedQuery && tracker === false){
+                        unit = this.props.historicalDeviceData[i].dataUnit;
+                        property = this.props.historicalDeviceData[i].dataName;
+                        maxima = Math.max(...data.data.map((d) => d.avg));
+                        minima = Math.min(...data.data.map((d) => d.avg));
+                        let sum = 0;
+                        for(let i = 0; i < data.data.length; i++){
+                          sum += data.data[i].avg;
+                        }
+                        avg = sum/data.data.length;
+
+                        }
+                        if(this.props.historicalDeviceData[i].query === this.props.savedQuery){
+                          num = i;
+                          historicalSave = this.props.historicalDeviceData[i];
                         }
                       }
                     })
                   }
-                  <select onChange={this.getHistoricalData} id="device-overview-select1" className="select">
-                    { optionValues.map((value, index) => {
-                        return <TimeValues select={this.props.select} value={value} index={index}/>
-                      })
-                    }
-                  </select>
-                  <select  onChange={this.getHistoricalData} id="device-overview-select2" className="select">
-
-                    { this.props.deviceArray.find({name: this.props.selectedDevice}).attributes.value.models.map((value, index) => {
-                      if(value.attributes.name !== 'city' && value.attributes.name !== 'country code' && value.attributes.name !== 'wind direction' && value.attributes.name !== 'sunrise' && value.attributes.name !== 'sunset' && value.attributes.name !== 'last updated' && value.attributes.name !== 'scd30 humidity' && value.attributes.name !== 'scd30 Temp'){
-                        return <Values select={this.props.select} value={value} index={index}/>
-                      } else {
-                        return null
+                  <div id="selecte-check" className="inline-left"><button className="chevron" onClick={this.prevDate}><FontAwesomeIcon icon={faChevronLeft} /></button>{new Date(historicalSave.startTime).getDate()}-{new Date(historicalSave.startTime).getMonth()+1}-{new Date(historicalSave.startTime).getFullYear()}<button className="chevron" onClick={this.nextDate}><FontAwesomeIcon icon={faChevronRight} /></button></div>
+                  <div className="inline-right">
+                    <select className="inline-right" onChange={this.getHistoricalData} id="device-overview-select2" className="select">
+                      { this.props.deviceArray.find({name: this.props.selectedDevice}).attributes.value.models.map((value, index) => {
+                        if(value.attributes.name !== 'city' && value.attributes.name !== 'country code' && value.attributes.name !== 'wind direction' && value.attributes.name !== 'sunrise' && value.attributes.name !== 'sunset' && value.attributes.name !== 'last updated' && value.attributes.name !== 'scd30 humidity' && value.attributes.name !== 'scd30 Temp'){
+                          return <Values select={this.props.select} value={value} index={index}/>
+                        } else {
+                          return null
+                          }
+                        })
                       }
-
-                      })
-                    }
-
-                  </select>
+                    </select>
+                    <select className="inline-right" onChange={this.getHistoricalData} id="device-overview-select1" className="select">
+                      { optionValues.map((value, index) => {
+                          return <TimeValues select={this.props.select} value={value} index={index}/>
+                        })
+                      }
+                    </select>
+                  </div>
                 </div>
-
               </div>
               <div className="row pad-40">
                 <div className="col">
-                  <VictoryChart padding={{top: 10, bottom: 40, left: 50, right: 50}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material}>
+                  <VictoryChart style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} padding={{top: 30, bottom: 40, left: 50, right: 50}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material}>
                     {this.props.historicalDeviceData.map((data) => {
 
                       if(this.props.savedQuery === data.query ){
@@ -228,13 +248,33 @@ class DeviceOverviewChart extends Component {
                             console.log(historicalSave);
                           }
                         }
-                        return <VictoryLine sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg)} data={historicalSave.data}/>
+                        return(
+                          <VictoryGroup color="#5265E1">
+                            <VictoryLine interpolation={"natural"} style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} sortOrder="ascending" sortKey="selected_timestamp" x="selected_timestamp" labels={(datum) => Math.round(datum.avg)} y={(datum) => Math.round(datum.avg)} data={historicalSave.data}/>
+                          </VictoryGroup>
+                        )
                         }
                       })
                     }
 
-                    <VictoryAxis orientation="left" standalone={false} dependentAxis tickFormat={(y) => y}/>
-                    <VictoryAxis standalone={false} tickFormat={(x) => new Date(x).getHours()}/>
+                    <VictoryAxis style={{ tickLabels: {fontSize: 9}}} orientation="left" standalone={false} dependentAxis tickFormat={(y) => y + historicalSave.dataUnit}/>
+                      <VictoryAxis style={{ tickLabels: {fontSize: 9}}} standalone={false}
+                        tickFormat={(x) => {
+                          if(this.state.selectedTimeGap === 'none'){
+                            return ''
+                          } else if(this.state.selectedTimeGap === 'day'){
+                            return new Date(x).getHours() + 1 + 'h'
+                          } else if(this.state.selectedTimeGap ==='week'){
+                            return "day " + new Date(x).getDate()
+                          }
+                          else if(this.state.selectedTimeGap === 'month'){
+                          let date = this.getWeekNumber(new Date(x))
+                           return "week " + date
+                         } else {
+                           return null
+                         }
+
+                        }}/>
                   </VictoryChart>
                 </div>
               </div>
@@ -242,16 +282,16 @@ class DeviceOverviewChart extends Component {
               <div className="row pad-40">
                 <div className="overview-lower-row">
                   <div className="overview-lower-box">
-                    <h4>Average Temps</h4>
-                    <p className="font-4">20</p>
+                    <h4>Average {property}</h4>
+                    <p className="font-4">{Math.round(avg)}{unit}</p>
                   </div>
                   <div className="overview-lower-box">
-                    <h4>Lowest Temps</h4>
-                    <p className="font-4">10</p>
+                    <h4>Lowest {property}</h4>
+                    <p className="font-4">{Math.round(minima)}{unit}</p>
                   </div>
                   <div className="overview-lower-box">
-                    <h4>Highest Temps</h4>
-                    <p className="font-4">24</p>
+                    <h4>Highest {property}</h4>
+                    <p className="font-4">{Math.round(maxima)}{unit}</p>
                   </div>
                 </div>
 
@@ -269,14 +309,18 @@ class DeviceOverviewChart extends Component {
             <div className="container">
               <div className="row pad-40">
                 <div className="overview-row">
-                  <h2 className="font-4">{this.props.selectedDevice}</h2>
-                    <select onChange={this.getHistoricalData} id="device-overview-select1" className="select">
-                      { optionValues.map((value, index) => {
-                          return <TimeValues select={this.props.select} value={value} index={index}/>
-                        })
-                      }
-                    </select>
-                    <select id="device-overview-select2" select2={this.props.select2} className="select">
+                  <h2 className="font-4 inline-left">{this.props.selectedDevice} device</h2>
+                  <div className="inline-right">
+                    <div className="inline-right pulse-time-gap">
+                      <select onChange={this.getHistoricalData} id="device-overview-select1" className="select no-pad-marg">
+                        { optionValues.map((value, index) => {
+                            return <TimeValues select={this.props.select} value={value} index={index}/>
+                          })
+                        }
+                        <option selected="selected" id={"option-" + this.props.cardId} value="def">Time gap</option>
+                      </select>
+                    </div>
+                    <select className="inline-right" id="device-overview-select2" select2={this.props.select2} className="select">
 
                         { this.props.deviceArray.find({name: this.props.selectedDevice}).attributes.value.models.map((value) => {
                           if(value.attributes.name !== 'city' && value.attributes.name !== 'country code' && value.attributes.name !== 'wind direction' && value.attributes.name !== 'sunrise' && value.attributes.name !== 'sunset' && value.attributes.name !== 'last updated' && value.attributes.name !== 'scd30 humidity' && value.attributes.name !== 'scd30 Temp'){
@@ -288,33 +332,17 @@ class DeviceOverviewChart extends Component {
                         }
 
                     </select>
+
+
+                  </div>
+
                 </div>
 
               </div>
               <div className="row pad-40">
-                <div className="col">
-                  <VictoryChart padding={{top: 0, bottom: 40, left: 50, right: 50}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material}>
-
-                  </VictoryChart>
+                <div className="col text-center">
+                  Select a "Time gap" to get an overview of the devices historical data.
                 </div>
-              </div>
-
-              <div className="row pad-40">
-                <div className="overview-lower-row">
-                  <div className="overview-lower-box">
-                    <h4>Average Temps</h4>
-                    <p className="font-4">20</p>
-                  </div>
-                  <div className="overview-lower-box">
-                    <h4>Lowest Temps</h4>
-                    <p className="font-4">10</p>
-                  </div>
-                  <div className="overview-lower-box">
-                    <h4>Highest Temps</h4>
-                    <p className="font-4">24</p>
-                  </div>
-                </div>
-
               </div>
 
             </div>

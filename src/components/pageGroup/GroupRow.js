@@ -19,22 +19,33 @@ const targetSource = {
   }
 }
 class GroupRow extends Component {
-
+  constructor(props){
+    super(props)
+    this.state = {
+      editOpen: false
+    }
+  }
   deleteItem = (id, group) => {
-    //DELETING AND ADDING FUNCTIONALITY HERE !!!
-    /*
-    console.log("GROUP ROW IS SAVING");
-    let groupCopy = Object.assign({}, this.props.group);
-    groupCopy.assignedDevices.push(id);
-    console.log(groupCopy);
-    */
-    //console.log(this.props.group)
-      //this.props.removeDeviceFromGroup(id, this.props.group);
-
 
   }
-
-
+  deleteGr = () => {
+    this.props.deleteGroup(this.props.group);
+  }
+  openEdit = () => {
+    if(this.state.editOpen === false){
+      this.setState({editOpen: true});
+      document.getElementById("non-edit-" + this.props.group.id).classList.add("dis-off");
+      document.getElementById("edit-" + this.props.group.id).classList.remove("dis-off");
+    } else {
+      this.setState({editOpen: false});
+      document.getElementById("non-edit-" + this.props.group.id).classList.remove("dis-off");
+      document.getElementById("edit-" + this.props.group.id).classList.add("dis-off");
+    }
+  }
+  editGr = () => {
+    this.props.editGroup(this.props.group, document.getElementById("edit-input-" + this.props.group.id).value);
+    this.openEdit();
+  }
   render () {
 
     if(this.props.deviceArray !== undefined){
@@ -47,12 +58,28 @@ class GroupRow extends Component {
           <div className="group-tab-color" style={{opacity: opacityHover, background: backgroundHover}}></div>
           <div className="group-row-10" style={{background: backgroundHover}}>
           </div>
-            <div className="container" >
-              <h2 className="font-3">{this.props.group.name}</h2>
+          <div className="col">
+            <div className="container">
+              <div className="group-util-row">
+                <h2 id={"non-edit-" + this.props.group.id} className="font-3 group-util-item">{this.props.group.name}</h2>
+                <div className="dis-off group-util-item" id={"edit-" + this.props.group.id}>
+                  <input id={"edit-input-" + this.props.group.id} className="font-3 group-util-item" placeholder={this.props.group.name}></input>
+                  <button className="group-util-item" onClick={this.editGr}>Save</button>
+                </div>
+
+
+              <button onClick={this.openEdit} className="group-util-item edit-btn row-button">Edit</button>
+                <button onClick={this.deleteGr} className="group-util-item delete-btn  row-button">Delete</button>
+              </div>
+
+              <div className="group-row-invis">
                 { this.props.deviceArray.models.map((device) =>
                   <Device group={this.props.group} assignedDevices={this.props.group.assignedDevices} deviceArray={this.props.deviceArray} handleDrop={(id, group) => this.deleteItem(id, group)} device={device} key={device.id} />
                 )}
+              </div>
             </div>
+          </div>
+
 
         </div>
       )

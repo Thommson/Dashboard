@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ValueGroupOption from './ValueGroupOption';
-import ChartListView from './ChartListView';
+import ChartList from './ChartList';
+import ChartView from './ChartView';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons'
@@ -37,7 +38,7 @@ class Compare extends Component {
       return(
         <div id="compare">
           <div className="col blue-bg-padding">
-              <h2 className="font-3 compare-h2">Select Values</h2>
+              <h2 className="font-2 compare-h2">Select Values</h2>
               <div className="container">
                 <div className="row">
                   <div className="col align-self-end">
@@ -48,7 +49,7 @@ class Compare extends Component {
                     </select>
                   </div>
                   <div className="col-2">
-                    <button onClick={this.switch} className="align-self-end" id="switch-button"><FontAwesomeIcon icon={ faExchangeAlt } /></button>
+                    <button onClick={this.switch} className="align-self-end" id="switch-button">Switch</button>
                   </div>
                   <div className="col align-self-end">
                     <select id="select-2" className="device-select">
@@ -62,8 +63,9 @@ class Compare extends Component {
 
               </div>
           </div>
+          <ChartView chart={this.props.charts[this.props.charts.length]}/>
           <div className="container">
-            <ChartListView pinMaster={this.props.pinMaster} groups={this.props.groups} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} historicalData={this.props.historicalData} charts={this.props.charts} />
+            <ChartList groups={this.props.groups} updateChartMaster={this.props.updateChartMaster} getHistoricalDataMaster={this.props.getHistoricalDataMaster} historicalData={this.props.historicalData} charts={this.props.charts} />
           </div>
         </div>
       )

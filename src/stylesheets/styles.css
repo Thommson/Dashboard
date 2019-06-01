@@ -3,11 +3,12 @@
   padding: 0;
 }
 ::-webkit-scrollbar {
-    width: 0px;  /* Remove scrollbar space */
+    width: 0px;
+    height: 0px; /* Remove scrollbar space */
     background: transparent;  /* Optional: just make scrollbar invisible */
 }
 .height-323{
-  height: 323px;
+  min-height: 323px;
 }
 body{
   background: #F8F9FE;
@@ -31,15 +32,16 @@ body{
 }
 .weather-icon{
   display: inline-block;
-  margin: 0 0 0 30px;
   height: 50px;
+  margin-bottom: 2px;
+  margin-right: 10px;
 }
 .arrow-icon{
   display: block;
   float: left;
-  margin-top: 10px;
-  margin-left: 10px;
-  margin-right: 40px;
+  margin-top: 6px;
+  margin-left: 0px;
+  margin-right: 20px;
   height: 40px;
   transform: rotate(-40deg);
 
@@ -61,9 +63,15 @@ body{
   z-index: 2;
   font-size: 46px;
   font-weight: 900;
+  margin-top: 10px;
+  line-height: 50px;
 }
 .font-4{
   font-size: 38px;
+  font-weight: 900;
+}
+.font-5{
+  font-size: 28px;
   font-weight: 900;
 }
 .font-standard{
@@ -75,6 +83,9 @@ body{
 }
 .col{
   padding: 0;
+  padding: 0;
+}
+.col-1{
   padding: 0;
 }
 .col-2{
@@ -114,6 +125,18 @@ body{
 .margin-top-l{
   margin-top: 50px;
 }
+.margin-top-xl{
+  margin-top: 80px;
+}
+#spliter{
+  display: block;
+  height: calc(100% - 90px);
+  margin: 45px auto;
+  width: 2px;
+  background: white;
+  border: 1px solid white;
+  box-sizing: border-box;
+}
 #live-device-data-list{
   width: 100%;
 }
@@ -137,6 +160,10 @@ body{
 .inline-left{
   display: inline-block;
   float: left;
+}
+.inline-right{
+  display: inline-block;
+  float: right;
 }
 .no-default-link{
   color: black;
@@ -165,6 +192,9 @@ body{
   text-decoration: none;
   color: black;
 }
+.chart-sub-row{
+
+}
 /* Navbar END */
 
 .blue-bg{
@@ -182,14 +212,19 @@ body{
   padding: 30px 40px 30px 20px;
 }
 .device-select{
+  box-sizing: border-box;
   width: 100%;
   background: none;
   border: none;
+  margin-bottom: 30px;
   border-bottom: 2px solid white;
   color: white;
 }
 .device-select option{
   color: #5265E1;
+}
+.stock-icon{
+  margin-right: 8px;
 }
 .device-select:focus{
   outline: none;
@@ -223,25 +258,28 @@ body{
   margin-top: 30px;
   color: white;
 }
+
 .unassigned-device-list-row{
-  width: 100%;
-  overflow-y: hidden;
+  width: 5000px;
+  overflow: hidden;
   overflow-x: scroll;
 }
 .device{
   display: inline-block;
   float: left;
-  width: 300px;
+  width: 336px;
   background: white;
-  height: 160px;
+  min-height: 160px;
   margin: 20px 40px 50px 0;
 }
-.device h3{
-  display: inline-block;
-  float: left;
-  width: 100%;
-}
 
+.device p{
+  margin: 0px;
+  margin-left: 4px;
+}
+.device span{
+  font-weight: 900;
+}
 .card{
   border-radius: 6px;
   box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
@@ -255,33 +293,45 @@ body{
 }
 .card-pad-lr h4{
   padding: 0;
-  margin: 4px 0;
+  margin:0;
 }
 .card-pad-lr p{
   padding: 0;
-  margin: 4px 0;
+  margin:0;
 }
-
+.line-color{
+  background:  #5265E1;
+}
 .group-list{
   width: 100%;
 }
 .group-row{
-  width: 100%;
   position: relative;
   display: inline-block;
   float: left;
+  width: 5000px;
+  overflow: hidden;
+  overflow-x: scroll;
+}
+.group-row-invis{
+  width: 5000px;
+  overflow: hidden;
+  overflow-x: scroll;
 }
 .group-row-10{
   position: absolute;
   z-index: 0;
   top: 0;
-  right: 0;
-  width: calc(100% - 50px);
+  left: 0;
   height: 100%;
   opacity: 0.2;
+  width: 5000px;
+  overflow: hidden;
+  overflow-x: scroll;
 }
 .group-row h2{
-  margin-top: 30px;
+  margin-top: 28px;
+  margin-left: 2px;
 }
 .group-tab-color{
   position: absolute;
@@ -291,7 +341,55 @@ body{
   width: 50px;
   height: 100%;
 }
+.group-util-row{
+  width: 100%;
+}
+.group-util-row input{
+  margin-top: 19px;
+  width: 300px;
+}
+.dis-off{
+  width: 0px !important;
+  height:  0px !important;
+  margin: 0 !important;
+  border: none;
+  background: none;
+  opacity: 0;
+  overflow: hidden;
+}
 
+.group-util-item{
+  margin-top: 0;
+  margin-right: 10px;
+  display: inline-block;
+}
+.text-center{
+  text-align: center;
+  padding: 50px;
+}
+.pulse-time-gap{
+  border-radius: 4px;
+  animation: pulse 5s infinite;
+}
+@-webkit-keyframes pulse {
+  0% {
+      box-shadow: 0 0 0 0 rgb(82, 101, 225, 0);
+  }
+  25% {
+      box-shadow: 0 0 0 7px rgb(82, 101, 225, 0.3);
+  }
+  50% {
+      box-shadow: 0 0 0 0 rgb(82, 101, 225, 0);
+  }
+  100% {
+      box-shadow: 0 0 0 0 rgb(82, 101, 225, 0);
+  }
+}
+
+.no-pad-marg{
+ padding: 0 !important;
+ margin: 0 !important;
+}
 #create-group{
   position: relative;
   height: 80px;
@@ -335,6 +433,9 @@ body{
 #create-group p{
   margin: 0;
 }
+#chart-view{
+  margin-bottom: 100px;
+}
 #group-save-button{
   width: 200px;
   margin-top: 20px;
@@ -349,8 +450,8 @@ body{
 #switch-button{
   display: block;
   margin: 0 auto;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   box-sizing: border-box;
   border: none;
   background: white;
@@ -359,13 +460,25 @@ body{
 }
 #compare-button{
   display: block;
-  margin: 20px auto 0 auto;
+  margin: 10px auto 0 auto;
   background: white;
   border: none;
   border-radius: 4px;
   padding: 10px 160px;
   color: #5265E1;
   font-weight: 900;
+}
+.legend-color-box{
+
+  display: block;
+  background: black;
+  height: 20px;
+  width: 20px;
+  margin-right: 14px;
+}
+.legend-box{
+  line-height: 20px;
+  width: 100%;
 }
 .align-pin{
   position: relative;
@@ -403,6 +516,12 @@ body{
 .color-box:hover{
   margin-top: 4px;
   height: 32px;
+}
+.delete-btn{
+  color: #cc122c;
+}
+.edit-btn{
+  color: #354dea;
 }
 .red{
   background: #F3445C;
@@ -445,11 +564,18 @@ body{
 .chart-card-content{
   display: block;
   width: 100%;
-
+}
+.row-button{
+  display: inline-block;
+  float: right;
+  margin-top: 40px;
+  margin-left: 20px;
+  background: none;
+  outline: none;
+  border: none;
+  cursor: pointer;
 }
 .overview-row{
-  display: inline-block;
-  float: left;
   margin-bottom: 30px;
   width: 100%;
 }
@@ -466,7 +592,7 @@ body{
   background: white;
   width: 100%;
   padding: 40px 0;
-    box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
+  box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
 }
 #device-overview-chart h2{
   display: inline-block;
@@ -474,21 +600,47 @@ body{
 }
 .select{
   display: inline-block;
-  float: right;
   height: 54px;
   width: 160px;
   text-align: center;
   text-align-last: center;
-  margin-left: 20px;
-  padding: 10px 24px;
+  margin-right: 20px;
+
   border-radius: 4px;
-  border: 3px solid lightgrey;
-  color: lightgrey;
+  background: white;
+  border: 2px solid #999999;
+  color: #999999;
+}
+.color-box-1{
+  background: #5265E1;
+}
+.color-box-2{
+  background: #E0BF51;
+}
+.chevron{
+  background: none;
+  border: none;
+  padding: 10px 16px;
 }
 .pinned-chart-list{
   margin-top: 60px;
   width: 100%;
   background: #F8F9FE;
+}
+.pin-button{
+  margin-top: 10px;
+  height: 30px;
+  width: 30px;
+  padding-top: 0px;
+  padding-left: 1px;
+  background: #a3a3a3;
+  border: none;
+  float: right;
+  border-radius: 30px;
+  color: white;
+}
+.pin-button-active{
+  background: #5265E1;
 }
 .weather-data-subrow-box{
   display: inline-block;

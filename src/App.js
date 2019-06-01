@@ -79,10 +79,7 @@ class App extends Component {
         return deviceArray;
     }).then((deviceArray) => {
 
-        console.log("HERE")
-        if(userData.attributes.unassignedDevices.length !== 0){
         this.countUnassignedDevicesMaster(deviceArray)
-      }
 
         for( let i = 0; i < deviceArray.models.length; i++){
           for(let j = 0; j < deviceArray.models[i].attributes.value.models.length; j++){
@@ -123,9 +120,17 @@ class App extends Component {
   }
   countUnassignedDevicesMaster = (props) => {
       let newArray = [];
-      for(let j = 0; j < deviceArray.models.length; j++){
-          newArray.push(deviceArray.models[j].attributes.meta.id);
+
+      for(let k = 0; k < userData.attributes.groups.length; k++){
+        for(let j = 0; j < deviceArray.models.length; j++){
+          console.log(userData)
+          console.log(k)
+          console.log(userData.attributes.groups[k].assignedDevices)
+          if(!userData.attributes.groups[k].assignedDevices.includes(deviceArray.models[j].attributes.meta.id)){
+            newArray.push(deviceArray.models[j].attributes.meta.id);
+          }
         }
+      }
       userData.save({ unassignedDevices: newArray }, {patch: true});
       this.setState({ unassignedDevices: newArray });
   }
@@ -173,11 +178,17 @@ class App extends Component {
           let data = await deviceArray.find({name: devices[i]}).attributes.value.find({name: values[i]}).attributes.state.findWhere({type: 'Report'}).getLogs({
             "query": query,
             "success": (model, response, XHRResponse) => {
+              console.log(response)
               response.query = query;
               response.startTime = startTime;
               response.endTime = endTime;
               response.dataType = deviceArray.find({name: devices[i]}).attributes.value.find({name: values[i]}).attributes.type;
               response.dataName = deviceArray.find({name: devices[i]}).attributes.value.find({name: values[i]}).attributes.name;
+              if(deviceArray.find({name: devices[i]}).attributes.value.find({name: values[i]}).attributes.number !== null){
+                response.dataUnit = deviceArray.find({name: devices[i]}).attributes.value.find({name: values[i]}).attributes.number.unit;
+              } else {
+                response.dataUnit = '';
+              }
               historicalDataCopy.push(response);
               console.log(historicalDataCopy)
               return historicalDataCopy
@@ -198,23 +209,33 @@ class App extends Component {
         console.log(historicalDataCopy)
         this.setState({ historicalData: historicalDataCopy });
       }
-
-
   }
   componentDidMount(){
-    //this.initApp()
+    this.initApp()
   }
   createChart = (values, devices, valueids, groups) => {
+    let checkId = valueids[0] + valueids[1];
     let chartsCopy = Object.assign([], this.state.charts);
-    let newChart = {};
-    newChart.values = values;
-    newChart.devices = devices;
-    newChart.valueids = valueids;
-    newChart.groups = groups
-    newChart.query = {};
-    chartsCopy.push(newChart);
-    userData.save({ charts: chartsCopy }, {patch: true});
-    this.setState({ charts: chartsCopy });
+    let newIds = [];
+    for(let i = 0; i < chartsCopy.length; i++){
+
+      newIds.push(chartsCopy[i].id);
+    }
+    if(!newIds.includes(checkId)){
+      let newChart = {};
+      newChart.id = valueids[0] + valueids[1];
+      newChart.values = values;
+      newChart.devices = devices;
+      newChart.valueids = valueids;
+      newChart.groups = groups;
+      newChart.pinned = false;
+      newChart.query = {};
+      chartsCopy.push(newChart);
+      userData.save({ charts: chartsCopy }, {patch: true});
+      this.setState({ charts: chartsCopy });
+    }
+
+
   }
   updateChartMaster = (valueids, query, startTime, endTime) => {
     console.log(valueids)
@@ -233,18 +254,52 @@ class App extends Component {
   saveQuery = (query) => {
     this.setState({ savedQuery: query});
   }
+  deleteGroup = (data) => {
+    console.log(data)
+    let groupsCopy = Object.assign([], this.state.groups);
+    let unassignedDevicesCopy = Object.assign([], this.state.unassignedDevices);
+    console.log(unassignedDevicesCopy);
+    var newGroups = groupsCopy.filter(group => group.id !== data.id)
+    unassignedDevicesCopy.push(...data.assignedDevices)
+    userData.save({ unassignedDevices: unassignedDevicesCopy, groups: newGroups }, {patch: true});
+    this.setState({
+      unassignedDevices: unassignedDevicesCopy,
+      groups: newGroups
+    })
+  }
+  editGroup = (group, name) => {
+    let groupsCopy = Object.assign([], this.state.groups);
+    for(let i = 0; i < groupsCopy.length; i++){
+      if(groupsCopy[i].id === group.id){
+        groupsCopy[i].name = name;
+        console.log(groupsCopy);
+        userData.save({ groups: groupsCopy }, {patch: true});
+        this.setState({ groups: groupsCopy });
+      }
+    }
+    return
+  }
+  pinMaster = (id, setPinStatus) => {
+    let chartsCopy = Object.assign([], this.state.charts);
+    for(let i = 0; i < chartsCopy.length; i++ ){
+      if(chartsCopy[i].id === id){
+        chartsCopy[i].pinned = setPinStatus
+      }
+    }
+    console.log(chartsCopy);
+    userData.save({ charts: chartsCopy }, {patch: true});
+    this.setState({ charts: chartsCopy });
+  }
 
   render() {
     return (
       <div className="container-fluid">
       <BrowserRouter>
         <Navbar navState={this.state.navState} navActiveMaster={this.navActiveMaster}/>
-        <button onClick={this.initApp}>Refresh</button>
-
         <Switch>
-          <Route path='/' render={() => <Overview saveQuery={this.saveQuery} savedQuery={this.state.savedQuery} dataTypes={this.state.dataTypes} deviceArray={this.state.deviceArray} updateChartMaster={this.updateChartMaster} getHistoricalDataMaster={this.getHistoricalDataMaster} historicalDeviceData={this.state.historicalDeviceData} historicalData={this.state.historicalData} charts={this.state.charts} groups={this.state.groups} />} exact="exact"/>
-          <Route path='/Group' render={() => <Group removeDeviceFromGroup={this.removeDeviceFromGroup} removeDeviceFromUnassigned={this.removeDeviceFromUnassigned} unassignedDevices={this.state.unassignedDevices} assignDeviceToGroupMaster={this.assignDeviceToGroupMaster} deviceArray={this.state.deviceArray} groups={this.state.groups} createGroupMaster={this.createGroupMaster}/>} />
-          <Route path='/Compare' render={() => <Compare updateChartMaster={this.updateChartMaster} getHistoricalDataMaster={this.getHistoricalDataMaster} historicalData={this.state.historicalData} charts={this.state.charts} createChart={this.createChart} groups={this.state.groups} deviceArray={this.state.deviceArray} />} exact="exact"/>
+          <Route path='/' render={() => <Overview pinMaster={this.pinMaster} saveQuery={this.saveQuery} savedQuery={this.state.savedQuery} dataTypes={this.state.dataTypes} deviceArray={this.state.deviceArray} updateChartMaster={this.updateChartMaster} getHistoricalDataMaster={this.getHistoricalDataMaster} historicalDeviceData={this.state.historicalDeviceData} historicalData={this.state.historicalData} charts={this.state.charts} groups={this.state.groups} />} exact="exact"/>
+          <Route path='/Group' render={() => <Group deleteGroup={this.deleteGroup} editGroup={this.editGroup} removeDeviceFromGroup={this.removeDeviceFromGroup} removeDeviceFromUnassigned={this.removeDeviceFromUnassigned} unassignedDevices={this.state.unassignedDevices} assignDeviceToGroupMaster={this.assignDeviceToGroupMaster} deviceArray={this.state.deviceArray} groups={this.state.groups} createGroupMaster={this.createGroupMaster}/>} />
+          <Route path='/Compare' render={() => <Compare pinMaster={this.pinMaster} updateChartMaster={this.updateChartMaster} getHistoricalDataMaster={this.getHistoricalDataMaster} historicalData={this.state.historicalData} charts={this.state.charts} createChart={this.createChart} groups={this.state.groups} deviceArray={this.state.deviceArray} />} exact="exact"/>
           <Route path='*' component={Error404}/>
         </Switch>
       </BrowserRouter>

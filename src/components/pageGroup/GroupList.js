@@ -7,7 +7,7 @@ class GroupList extends Component {
       return(
         <div className="group-list row">
           { this.props.groups.map((group, index) =>
-            <GroupRow removeDeviceFromGroup={this.props.removeDeviceFromGroup} assignDeviceToGroupMaster={this.props.assignDeviceToGroupMaster} deviceArray={this.props.deviceArray} group={group} key={group.id} />
+            <GroupRow deleteGroup={this.props.deleteGroup} editGroup={this.props.editGroup} removeDeviceFromGroup={this.props.removeDeviceFromGroup} assignDeviceToGroupMaster={this.props.assignDeviceToGroupMaster} deviceArray={this.props.deviceArray} group={group} key={group.id} />
           )}
         </div>
       )
