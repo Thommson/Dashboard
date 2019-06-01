@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+
 class CreateGroup extends Component {
   constructor(props){
     super(props)
@@ -10,7 +13,9 @@ class CreateGroup extends Component {
       green: "#4BD487",
       red: "#F3445C",
       yellow: "#F2E641",
-      purple: "#750DCF"
+      purple: "#750DCF",
+      color: '',
+      name: ''
     }
   }
   toggleCreateState = () =>{
@@ -58,14 +63,37 @@ class CreateGroup extends Component {
 
   }
   saveGroup = () => {
-    console.log('Save Group')
-    let newGroup = {
-      id: this.state.name+this.state.color,
-      name: this.state.name,
-      color: this.state.color,
-      assignedDevices: []
-    };
-    this.props.createGroupMaster(newGroup);
+    document.getElementById('alert-color').innerHTML = '';
+    document.getElementById('alert-name').innerHTML = '';
+    let groupCheck = [];
+    for(let i = 0; i < this.props.groups.length; i++){
+      groupCheck.push(this.props.groups[i].name);
+    }
+    console.log(groupCheck);
+    if(this.state.name !== '' && this.state.color !== '' && !groupCheck.includes(this.state.name)){
+        console.log('Saved Group')
+      let newGroup = {
+        id: this.state.name+this.state.color,
+        name: this.state.name,
+        color: this.state.color,
+        assignedDevices: []
+      };
+      this.props.createGroupMaster(newGroup);
+      this.setState({createState: ''});
+    } else {
+      if(this.state.name === '' ){
+          console.log('Name')
+        document.getElementById('alert-color').innerHTML = "Please enter a name."
+      }
+      if(this.state.color === '' ){
+          console.log('Color')
+        document.getElementById('alert-name').innerHTML = "Please select a color."
+      }
+      if(groupCheck.includes(this.state.name)){
+        document.getElementById('alert-name-used').innerHTML = "Name is already used."
+      }
+    }
+
   }
 
   render () {
@@ -74,12 +102,13 @@ class CreateGroup extends Component {
         <div id="create-group" className="card create-group-active">
           <h3 className="font-4">Create Group</h3>
           <div className="row">
-            <div className="col">
-              <label for="groupName">Name</label><br></br>
-              <input onChange={this.getName} type="text" name="groupName"/>
+            <div className="col-4">
+              <label for="groupName" className="blue-text">Name</label><br></br>
+              <input className="create-group-input" onChange={this.getName} type="text" name="groupName"/>
             </div>
-            <div className="col">
-              <p>Color</p>  
+            <div className="col-1"></div>
+            <div className="col-7">
+              <p className="blue-text" >Color</p>
               <div className="row">
                 <div className="col-2 align-self-end">
                   <div onClick={this.getColor} id={this.state.red} className="color-box red"></div>
@@ -102,16 +131,25 @@ class CreateGroup extends Component {
               </div>
             </div>
           </div>
-
-            <button id="group-save-button" onClick={this.saveGroup}>Save</button>
-
-            <button onClick={this.toggleCreateState} id="create-group-button">Create a group</button>
+          <div  className="row margin-top-m">
+            <div id="alert-name"></div>
+            <div id="alert-name-used"></div>
+            <div id="alert-color"></div>
+          </div>
+          <div className="row">
+            <div className="col-10">
+              <button id="group-save-button" onClick={this.saveGroup}>Save</button>
+            </div>
+            <div className="col-2">
+              <button className="plus-icon-open" onClick={this.toggleCreateState} id="create-group-button"><FontAwesomeIcon size="lg" icon={ faPlus }/></button>
+            </div>
+          </div>
         </div>
       )
     } else {
       return(
-        <div id="create-group" className="card">
-            <button onClick={this.toggleCreateState} id="create-group-button">Create a group</button>
+        <div id="create-group">
+            <button className="plus-icon-closed" onClick={this.toggleCreateState} id="create-group-button"><FontAwesomeIcon size="2x" icon={ faPlus }/></button>
         </div>
       )
     }

@@ -45,7 +45,10 @@ class Overview extends Component {
                           <LiveDeviceDataList dataTypes={this.props.dataTypes} selectedDevice={this.state.selectedDevice} deviceArray={this.props.deviceArray} />
                     </div>
                   </div>
-                  <div className="col-6 blue-bg-padding-right">
+                  <div className="col-1">
+                      <span id="spliter"></span>
+                  </div>
+                  <div className="col-5 blue-bg-padding-right">
                     <LiveWeatherData weatherData={this.props.deviceArray.find({name: "Current Weather"}).attributes.value} />
                   </div>
                 </div>

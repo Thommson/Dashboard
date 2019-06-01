@@ -11,7 +11,8 @@ class ChartView extends Component {
   constructor(props){
     super(props)
     this.state = {
-      status: ''
+      status: '',
+      selectedTimeGap: 'none'
     }
     this.getHistoricalData= this.getHistoricalData.bind(this);
     this.prevDate= this.prevDate.bind(this);
@@ -153,7 +154,7 @@ class ChartView extends Component {
     let avg2;
     let maxima;
     let gap;
-    if(this.props.historicalData !== undefined){
+    if(this.props.historicalData !== undefined && this.state.selectedTimeGap !== 'none'){
       return(
         <div id="chart-view">
             <div className="row card-pad">
@@ -363,29 +364,40 @@ class ChartView extends Component {
         </div>
 
       )
-    } else {
+    } else if(this.state.selectedTimeGap === 'none'){
       return(
-        <div className="chart-card row">
-          <div className="col">
-
-            <div className="row card-pad">
-              <h3>{this.props.chart.groups[0]} {this.props.chart.values[0]} with {this.props.chart.groups[1]}  {this.props.chart.values[1]}</h3>
-              <select id={this.props.chartType}></select>
-              <select onChange={this.getHistoricalData} id={this.props.timeGap}>
+        <div id="chart-view">
+          <div className="row card-pad">
+            <div className="col-5">
+              <div className="inline-left legend-box">
+                <span className="legend-color-box color-box-1 inline-left"></span>
+                <p className="inline-left">{this.props.chart.groups[0]} {this.props.chart.values[0]}</p>
+              </div>
+              <div className="inline-left legend-box">
+                <span className="legend-color-box color-box-2 inline-left"></span>
+                <p className="inline-left">{this.props.chart.groups[1]}  {this.props.chart.values[1]}</p>
+              </div>
+            </div>
+            <div className="col-7">
+              <button id="pin-button" className="inline-right pin-button" onClick={this.pin}><FontAwesomeIcon size="xs" icon={ faThumbtack } /></button>
+              <select onChange={this.getHistoricalData} id={this.props.timeGap} className="select inline-right pulse-time-gap">
+                <option id={"option-" + this.props.cardId} value="def">Time gap</option>
                 <option value="day">Day</option>
                 <option value="week">Week</option>
                 <option value="month">Month</option>
               </select>
             </div>
-
-            <div className="row">
-
+          </div>
+          <div className="row">
+            <div className="col text-center">
+              Select a "Time gap" to get historical data in the chart.
             </div>
-
           </div>
         </div>
       )
 
+    } else {
+      return null
     }
   }
 }

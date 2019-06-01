@@ -66,11 +66,9 @@ class GroupRow extends Component {
                   <input id={"edit-input-" + this.props.group.id} className="font-3 group-util-item" placeholder={this.props.group.name}></input>
                   <button className="group-util-item" onClick={this.editGr}>Save</button>
                 </div>
-
-
-              <button onClick={this.openEdit} className="group-util-item edit-btn row-button">Edit</button>
                 <button onClick={this.deleteGr} className="group-util-item delete-btn  row-button">Delete</button>
-              </div>
+                <button onClick={this.openEdit} className="group-util-item edit-btn row-button">Edit</button>
+            </div>
 
               <div className="group-row-invis">
                 { this.props.deviceArray.models.map((device) =>

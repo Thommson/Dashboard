@@ -346,7 +346,7 @@ class ChartCard extends Component {
         </div>
 
       )
-    } else if(this.state.selectedTimeGap === 'none'){
+    } else if(this.state.selectedTimeGap === 'none' && this.props.chart.pinned === true){
       return(
         <div className="chart-card row card">
           <div className="col">
@@ -369,12 +369,12 @@ class ChartCard extends Component {
                   <option value="week">Week</option>
                   <option value="month">Month</option>
                 </select>
-                <div className="inline-left"><button className="chevron" onClick={this.prevDate}><FontAwesomeIcon icon={faChevronLeft} /></button>{new Date(this.props.chart.endTime).getDate()}-{new Date(this.props.chart.endTime).getMonth()+1}-{new Date(this.props.chart.endTime).getFullYear()}<button className="chevron" onClick={this.nextDate}><FontAwesomeIcon icon={faChevronRight} /></button></div>
+
               </div>
             </div>
             <div className="row">
               <div className="col text-center">
-                Select a "Time gap" to get historical data in the chart.
+                Select a "Time gap" to get historical data in a chart.
               </div>
             </div>
           </div>

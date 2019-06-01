@@ -106,6 +106,9 @@ body{
 .col-8{
   padding: 0;
 }
+.col-10{
+  padding: 0;
+}
 .container-fluid{
   padding: 0;
 }
@@ -127,6 +130,18 @@ body{
 }
 .margin-top-xl{
   margin-top: 80px;
+}
+#alert-color{
+  color: #cc122c;
+  width: 100%;
+}
+#alert-name{
+  color: #cc122c;
+  width: 100%;
+}
+#alert-name-used{
+  color: #cc122c;
+  width: 100%;
 }
 #spliter{
   display: block;
@@ -178,9 +193,7 @@ body{
   color: #5265E1;
 }
 .nav-button{
-  line-height: 80px;
-  padding: 0 10px;
-  margin-right: 40px;
+  padding: 25px 20px;
   font-size: 20px;
   font-weight: bold;
   transition: all ease-out 0.15s;
@@ -191,9 +204,6 @@ body{
 .no-default-link:hover{
   text-decoration: none;
   color: black;
-}
-.chart-sub-row{
-
 }
 /* Navbar END */
 
@@ -365,10 +375,9 @@ body{
 }
 .text-center{
   text-align: center;
-  padding: 50px;
+  padding: 30px 0 50px 0;
 }
 .pulse-time-gap{
-  border-radius: 4px;
   animation: pulse 5s infinite;
 }
 @-webkit-keyframes pulse {
@@ -376,9 +385,9 @@ body{
       box-shadow: 0 0 0 0 rgb(82, 101, 225, 0);
   }
   25% {
-      box-shadow: 0 0 0 7px rgb(82, 101, 225, 0.3);
+      box-shadow: 0 0 0 6px rgb(82, 101, 225, 0.3);
   }
-  50% {
+  60% {
       box-shadow: 0 0 0 0 rgb(82, 101, 225, 0);
   }
   100% {
@@ -422,7 +431,7 @@ body{
   border-bottom: 2px solid lightgrey;
 }
 .create-group-active{
-  height: 200px !important;
+  height: auto !important;
   width: 50% !important;
 }
 #create-group-button{
@@ -605,11 +614,56 @@ body{
   text-align: center;
   text-align-last: center;
   margin-right: 20px;
-
   border-radius: 4px;
   background: white;
-  border: 2px solid #999999;
-  color: #999999;
+  border: 2px solid #5265E1;
+  color: #5265E1;
+
+}
+.plus-icon-closed{
+  background: white;
+  border: none;
+  width: 56px;
+  height: 56px;
+  box-shadow: 1px 3px 8px rgba(0,0,0,0.4);
+  border-radius: 50px;
+  color: #5265E1;
+}
+.plus-icon-closed:focus{
+  outline: none;
+}
+
+.plus-icon-open{
+  width: 100%;
+  transform: rotate(45deg);
+    background: none;
+  border: none;
+  color: #cc122c;
+}
+.plus-icon-open:focus{
+  outline: none;
+}
+#group-save-button{
+  border: none;
+  background: #5265E1;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+}
+#create-group-button{
+  background:
+}
+#create-group{
+  max-width: 700px;
+}
+.create-group-input{
+  width: 100%;
+}
+.blue-text{
+  color: #5265E1;
+}
+.select:focus{
+  outline: none;
 }
 .color-box-1{
   background: #5265E1;
@@ -621,6 +675,9 @@ body{
   background: none;
   border: none;
   padding: 10px 16px;
+}
+.chevron:focus{
+  outline: none;
 }
 .pinned-chart-list{
   margin-top: 60px;

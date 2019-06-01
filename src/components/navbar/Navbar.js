@@ -27,11 +27,11 @@ class Navbar extends Component {
   render () {
     return(
       <nav id="navbar" className="row">
-        <NavLink to="/" id="logo"><img src={Logo} alt="Logo"/></NavLink>
+        <NavLink to="/" id="logo"><img onClick={this.navActiveHome} src={Logo} alt="Logo"/></NavLink>
         <div className="nav-button-list">
-          <NavLink to="/" className="inline-left no-default-link nav-button-wrapper"><span onClick={this.navActiveHome} id="nav-home" className="nav-button nav-button-active">Overview</span></NavLink>
-          <NavLink to="/Group" className="inline-left no-default-link nav-button-wrapper"><span onClick={this.navActiveGroup} id="nav-group" className="nav-button">Group</span></NavLink>
-          <NavLink to="/Compare" className="inline-left no-default-link nav-button-wrapper"><span onClick={this.navActiveCompare} id="nav-compare" className="nav-button">Compare</span></NavLink>
+          <NavLink to="/" className="inline-left no-default-link nav-button-wrapper"><div onClick={this.navActiveHome} className="nav-button "><span id="nav-home" className="nav-button-active">Overview</span></div></NavLink>
+          <NavLink to="/Group" className="inline-left no-default-link nav-button-wrapper"><div onClick={this.navActiveGroup} className="nav-button"><span id="nav-group">Group</span></div></NavLink>
+          <NavLink to="/Compare" className="inline-left no-default-link nav-button-wrapper"><div onClick={this.navActiveCompare} className="nav-button"><span id="nav-compare">Compare</span></div></NavLink>
         </div>
       </nav>
     )
