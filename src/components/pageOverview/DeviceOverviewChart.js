@@ -238,7 +238,7 @@ class DeviceOverviewChart extends Component {
               </div>
               <div className="row pad-40">
                 <div className="col">
-                  <VictoryChart style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} padding={{top: 30, bottom: 40, left: 50, right: 50}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material}>
+                  <VictoryChart style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} padding={{top: 50, bottom: 40, left: 60, right: 60}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material}>
                     {this.props.historicalDeviceData.map((data) => {
 
                       if(this.props.savedQuery === data.query ){
@@ -340,7 +340,7 @@ class DeviceOverviewChart extends Component {
 
               </div>
               <div className="row pad-40">
-                <div className="col text-center">
+                <div className="col text-center margin-top-l">
                   Select a "Time gap" to get an overview of the devices historical data.
                 </div>
               </div>

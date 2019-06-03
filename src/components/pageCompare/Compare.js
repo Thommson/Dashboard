@@ -70,27 +70,33 @@ class Compare extends Component {
     } else {
       return(
         <div id="compare">
-          <div className="col blue-bg-padding">
-              <h2 className="font-2 compare-h2">Select Values</h2>
-              <div className="container">
-                <div className="row">
-                  <div className="col align-self-end">
-                    <select className="device-select">
+          <div className="row">
+            <div className="col blue-bg-padding">
+                <h2 className="font-2 compare-h2">Select Values</h2>
+                <div className="container">
+                  <div className="row">
+                    <div className="col align-self-end">
+                      <select className="device-select">
 
-                    </select>
-                  </div>
-                  <div className="col-2">
-                    <button className="align-self-end" id="switch-button">Switch</button>
-                  </div>
-                  <div className="col align-self-end">
-                    <select className="device-select">
+                      </select>
+                    </div>
+                    <div className="col-2">
+                      <button className="align-self-end" id="switch-button">Switch</button>
+                    </div>
+                    <div className="col align-self-end">
+                      <select className="device-select">
 
-                    </select>
+                      </select>
+                    </div>
                   </div>
+                  <button id="compare-button">Compare</button>
                 </div>
-                <button id="compare-button">Compare</button>
-
-              </div>
+            </div>
+          </div>
+          <div className='row'>
+            <div className="col text-center">
+              Click the Compare button to create a chart.
+            </div>
           </div>
         </div>
       )

@@ -129,7 +129,7 @@ body{
   margin-top: 50px;
 }
 .margin-top-xl{
-  margin-top: 80px;
+  margin-top: 120px;
 }
 #alert-color{
   color: #cc122c;
@@ -282,7 +282,9 @@ body{
   min-height: 160px;
   margin: 20px 40px 50px 0;
 }
-
+.device:hover{
+  cursor: grabbing;
+}
 .device p{
   margin: 0px;
   margin-left: 4px;
@@ -306,7 +308,7 @@ body{
   margin:0;
 }
 .card-pad-lr p{
-  padding: 0;
+  padding: 2px 0;
   margin:0;
 }
 .line-color{
@@ -378,6 +380,7 @@ body{
   padding: 30px 0 50px 0;
 }
 .pulse-time-gap{
+  border-radius: 2px;
   animation: pulse 5s infinite;
 }
 @-webkit-keyframes pulse {
@@ -477,6 +480,7 @@ body{
   color: #5265E1;
   font-weight: 900;
 }
+
 .legend-color-box{
 
   display: block;
@@ -563,6 +567,19 @@ body{
 .axis-100{
   width: 100%;
 }
+.opt-group{
+  position: relative;
+}
+
+.side-bar{
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 10px;
+  width: 4px;
+  display: block;
+  background-color: red;
+}
 .chart-card{
   margin-bottom: 40px;
   display: block;
@@ -585,7 +602,6 @@ body{
   cursor: pointer;
 }
 .overview-row{
-  margin-bottom: 30px;
   width: 100%;
 }
 .overview-lower-row{
@@ -670,6 +686,12 @@ body{
 }
 .color-box-2{
   background: #E0BF51;
+}
+.blue-under{
+  border-bottom: 3px solid #5265E1;
+}
+.orange-under{
+  border-bottom: 3px solid #E0BF51;
 }
 .chevron{
   background: none;

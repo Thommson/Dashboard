@@ -165,7 +165,7 @@ class ChartCard extends Component {
               </div>
             </div>
             <div className="row">
-              <VictoryChart style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} padding={{top: 0, bottom: 40, left: 50, right: 50}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material} id={this.props.cardId} className="chart-card-content">
+              <VictoryChart style={{ data: {fontSize: 9}, labels: {fontSize: 9}}} padding={{top: 10, bottom: 40, left: 60, right: 60}} domainPadding={20} height={250} width={650} theme={VictoryTheme.material} id={this.props.cardId} className="chart-card-content">
 
                 { this.props.historicalData.map((data) => {
                   if(this.props.chart.valueids[0] === data.meta.id && this.props.chart.query === data.query){
@@ -317,25 +317,25 @@ class ChartCard extends Component {
 
                 <div className="row card-pad-lr">
                   <div className="col-4">
-                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(avg1)}{unit1}</span></p>
+                    <p><span className="blue-under">{this.props.chart.groups[0]} {this.props.chart.values[0]}</span>: <span className="bold-font">{Math.round(avg1)}{unit1}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(maxima1)}{unit1}</span></p>
+                    <p><span className="blue-under">{this.props.chart.groups[0]} {this.props.chart.values[0]}</span>: <span className="bold-font">{Math.round(maxima1)}{unit1}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(minima1)}{unit1}</span></p>
+                    <p><span className="blue-under">{this.props.chart.groups[0]} {this.props.chart.values[0]}</span>: <span className="bold-font">{Math.round(minima1)}{unit1}</span></p>
                   </div>
                 </div>
 
                 <div className="row card-pad-lr">
                   <div className="col-4">
-                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(avg2)}{unit2}</span></p>
+                    <p><span className="orange-under">{this.props.chart.groups[1]}  {this.props.chart.values[1]}</span>: <span className="bold-font">{Math.round(avg2)}{unit2}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(maxima2)}{unit2}</span></p>
+                    <p><span className="orange-under">{this.props.chart.groups[1]}  {this.props.chart.values[1]}</span>: <span className="bold-font">{Math.round(maxima2)}{unit2}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(minima2)}{unit2}</span></p>
+                    <p><span className="orange-under">{this.props.chart.groups[1]}  {this.props.chart.values[1]}</span>: <span className="bold-font">{Math.round(minima2)}{unit2}</span></p>
                   </div>
                 </div>
 

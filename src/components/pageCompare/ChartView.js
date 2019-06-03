@@ -154,6 +154,8 @@ class ChartView extends Component {
     let avg2;
     let maxima;
     let gap;
+    let unit1;
+    let unit2;
     if(this.props.historicalData !== undefined && this.state.selectedTimeGap !== 'none'){
       return(
         <div id="chart-view">
@@ -189,6 +191,7 @@ class ChartView extends Component {
                   if(this.props.chart.valueids[0] === data.meta.id && this.props.chart.query === data.query){
                       maxima1 = Math.max(...data.data.map((d) => d.avg));
                       minima1 = Math.min(...data.data.map((d) => d.avg));
+                      unit1 = data.dataUnit;
                       let sum = 0;
                       for(let i = 0; i < data.data.length; i++){
                         sum += data.data[i].avg;
@@ -198,6 +201,7 @@ class ChartView extends Component {
                   if(this.props.chart.valueids[1] === data.meta.id && this.props.chart.query === data.query){
                       maxima2 = Math.max(...data.data.map((d) => d.avg));
                       minima2 = Math.min(...data.data.map((d) => d.avg));
+                      unit2 = data.dataUnit;
                       let sum = 0;
                       for(let i = 0; i < data.data.length; i++){
                         sum += data.data[i].avg;
@@ -337,25 +341,25 @@ class ChartView extends Component {
 
                 <div className="row card-pad-lr">
                   <div className="col-4">
-                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(avg1)}</span></p>
+                    <p><span className="blue-under">{this.props.chart.groups[0]} {this.props.chart.values[0]}</span>: <span className="bold-font">{Math.round(avg1)}{unit1}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(maxima1)}</span></p>
+                    <p><span className="blue-under">{this.props.chart.groups[0]} {this.props.chart.values[0]}</span>: <span className="bold-font">{Math.round(maxima1)}{unit1}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[0]} {this.props.chart.values[0]} <span className="bold-font">{Math.round(minima1)}</span></p>
+                    <p><span className="blue-under">{this.props.chart.groups[0]} {this.props.chart.values[0]}</span>: <span className="bold-font">{Math.round(minima1)}{unit1}</span></p>
                   </div>
                 </div>
 
                 <div className="row card-pad-lr">
                   <div className="col-4">
-                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(avg2)}</span></p>
+                    <p><span className="orange-under">{this.props.chart.groups[1]}  {this.props.chart.values[1]}</span>: <span className="bold-font">{Math.round(avg2)}{unit2}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(maxima2)}</span></p>
+                    <p><span className="orange-under">{this.props.chart.groups[1]}  {this.props.chart.values[1]}</span>: <span className="bold-font">{Math.round(maxima2)}{unit2}</span></p>
                   </div>
                   <div className="col-4">
-                    <p>{this.props.chart.groups[1]}  {this.props.chart.values[1]} <span className="bold-font">{Math.round(minima2)}</span></p>
+                    <p><span className="orange-under">{this.props.chart.groups[1]}  {this.props.chart.values[1]}</span>: <span className="bold-font">{Math.round(minima2)}{unit2}</span></p>
                   </div>
                 </div>
 
@@ -389,8 +393,8 @@ class ChartView extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="col text-center">
-              Select a "Time gap" to get historical data in the chart.
+            <div className="col text-center margin-top-l">
+              <div>Click the <FontAwesomeIcon size="xs" icon={ faThumbtack } /> to save the chart to the Overview page for later.</div>
             </div>
           </div>
         </div>

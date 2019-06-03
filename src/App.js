@@ -62,11 +62,13 @@ class App extends Component {
   async initApp() {
     new Promise(async (resolve, reject) => {
         userData = await getDataMaster();
-        this.setState({
-          charts: userData.attributes.charts,
-          groups: userData.attributes.groups,
-          unassignedDevices: userData.attributes.unassignedDevices
-        })
+        if(userData.attributes !== null && userData.attributes !== undefined ){
+          this.setState({
+            charts: userData.attributes.charts,
+            groups: userData.attributes.groups,
+            unassignedDevices: userData.attributes.unassignedDevices
+          })
+        }
         console.log(userData);
         resolve(userData);
     }).then(async (userData) => {
@@ -120,17 +122,24 @@ class App extends Component {
   }
   countUnassignedDevicesMaster = (props) => {
       let newArray = [];
-
-      for(let k = 0; k < userData.attributes.groups.length; k++){
+      if(userData.attributes.groups.length !== 0){
         for(let j = 0; j < deviceArray.models.length; j++){
-          console.log(userData)
-          console.log(k)
-          console.log(userData.attributes.groups[k].assignedDevices)
-          if(!userData.attributes.groups[k].assignedDevices.includes(deviceArray.models[j].attributes.meta.id)){
-            newArray.push(deviceArray.models[j].attributes.meta.id);
+          for(let k = 0; k < userData.attributes.groups.length; k++){
+
+            console.log(userData)
+            console.log(k)
+            console.log(userData.attributes.groups[k].assignedDevices)
+            if(!userData.attributes.groups[k].assignedDevices.includes(deviceArray.models[j].attributes.meta.id)){
+              newArray.push(deviceArray.models[j].attributes.meta.id);
+            }
           }
         }
+      } else {
+          for(let j = 0; j < deviceArray.models.length; j++){
+            newArray.push(deviceArray.models[j].attributes.meta.id);
+          }
       }
+
       userData.save({ unassignedDevices: newArray }, {patch: true});
       this.setState({ unassignedDevices: newArray });
   }
@@ -216,6 +225,7 @@ class App extends Component {
   createChart = (values, devices, valueids, groups) => {
     let checkId = valueids[0] + valueids[1];
     let chartsCopy = Object.assign([], this.state.charts);
+    chartsCopy = chartsCopy.filter(chart => chart.pinned === true);
     let newIds = [];
     for(let i = 0; i < chartsCopy.length; i++){
 
@@ -280,12 +290,19 @@ class App extends Component {
     return
   }
   pinMaster = (id, setPinStatus) => {
+
     let chartsCopy = Object.assign([], this.state.charts);
+
+    console.log(chartsCopy)
     for(let i = 0; i < chartsCopy.length; i++ ){
       if(chartsCopy[i].id === id){
         chartsCopy[i].pinned = setPinStatus
       }
+      if(chartsCopy[i].id === id && setPinStatus === false){
+        chartsCopy = chartsCopy.filter(chart => chart.id !== id);
+      }
     }
+
     console.log(chartsCopy);
     userData.save({ charts: chartsCopy }, {patch: true});
     this.setState({ charts: chartsCopy });

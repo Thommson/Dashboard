@@ -14,7 +14,12 @@ class GroupList extends Component {
     } else {
       return(
         <div className="group-list row">
-          Sorry... No Groups...
+          <div className="col text-center margin-top-xl">
+            <div className="bold-font">Create a group.</div>
+          Groups are used to give a device set a meaningful location based name.<br></br>
+        Example: <span className="bold-font">Living room</span>
+
+          </div>
         </div>
       )
     }
